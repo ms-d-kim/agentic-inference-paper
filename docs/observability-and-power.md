@@ -36,6 +36,36 @@ evictions are gettable. The one genuinely missing piece is **per-tenant eviction
 **First action — the instrumentation spike (1 day, 1 config, before any GPU spend):** confirm which of
 1/2/3 the stock engines actually give us. This is the cheapest possible de-risk of issue #15.
 
+### Wrong-layer tools: GPU profilers (Nsight) and reuse predictors (Tencent FlashMemory)
+
+Two tempting shortcuts that **don't** source per-tenant eviction attribution, for the same root reason —
+they live at the wrong abstraction layer:
+
+- **Nsight Compute / Nsight Systems.** These are **kernel/hardware** profilers. They see SASS instructions,
+  occupancy, warp stalls, and the **GPU's own L1/L2/DRAM** hierarchy — *not* the engine's PagedAttention
+  block pool, which to the hardware is just undifferentiated HBM. A profiler cannot say "chat request #42
+  evicted agent request #17's KV block," because "request," "tenant," and "KV block" don't exist at the
+  layer it measures. Two further problems: Nsight **Compute** serializes kernel replay with heavy overhead —
+  unusable on a live multi-tenant server; Nsight **Systems** (the timeline tool) can show the *consequence*
+  of a miss (a prefill kernel firing again) **only if you NVTX-tag the work by request** — but that tag *is*
+  the application-level fact you'd instrument in the block manager anyway, so the profiler adds overhead, not
+  information. **Verdict:** profilers can *corroborate the cost* of eviction (recompute on the timeline);
+  they cannot *attribute* it. Attribution is an engine/scheduler fact, captured at step 2 above.
+
+- **Tencent's FlashMemory / Lookahead Sparse Attention** (`2606.09079`, project suspended). This predicts which
+  KV chunks are *query-critical* for the **current** generation (a learned Neural Memory Indexer keeps ~13.5%).
+  It is **intra-request attention sparsification** — a *mechanism* for deciding what *one* request can drop —
+  not a *cross-tenant* observability tool, and not about who evicts whom under contention. Adopting a predictor
+  would also flip us from a **measurement** paper to a **mechanism** paper, which we explicitly are not. The
+  conceptual link is one-directional: reuse/criticality *prediction* is the kind of signal the *inferred*-contract
+  systems (Continuum/CacheTTL, GoodServe) use to decide retention — so it belongs to the mechanism lineage we
+  *measure the value of*, on the right-hand side of the seam, not to our instrumentation. We **observe** realized
+  reuse and **replay** available reuse; we never need to **predict** it.
+
+**Bottom line:** per-tenant eviction attribution is cheap and lives in exactly one place — the engine's block
+manager (step 2). No profiler or predictor moves that needle; the 1-day spike confirms whether even the small
+hook is needed.
+
 ## 2. The replay question — is it the *same* problem? (issue #2/#11)
 
 **No — and it's the easier half.** The two are different axes:

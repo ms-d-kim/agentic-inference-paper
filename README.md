@@ -217,7 +217,7 @@ docs/
   metric-design.md                       The "Cost of Grit" metric decision (cost-per-verified-task)
   observability-and-power.md             How the cache-visibility + statistical-power blockers get solved
   ecosystem-and-product-map.md           Product/business lens — ecosystem, personas, journeys, opportunities
-  ecosystem-map.html                     Self-contained interactive ecosystem map (open in a browser)
+  ecosystem-map.html                     Academic "Figure 1" interactive ecosystem map (open in a browser)
 02-literature/
   sota-verified-2026.md                  Citation ledger — source of truth (✓ / ⚠)
   reading-queue.md                       Prioritized reading
