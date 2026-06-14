@@ -41,19 +41,13 @@ elsewhere are cross-referenced rather than restated.*
 
 ## Strategy & process (cross-referenced; the gates around the work)
 
-7. **IP / employer review is a gate, not an afterthought.** Co-authors at competitors in inference
-   (NVIDIA, Together). Keep the repo private; clear each employer's publication review before going
-   public; the open NVIDIA outside-paper disclosure is the blocking item. *(Not legal advice — check
-   the actual policies.)* (cf. [`../06-collab/stakeholders.md`](../06-collab/stakeholders.md), STATUS.md
-   open decisions.)
-
-8. **Author order is substantive.** Instrumentation is the credibility-critical layer and is Vinita's;
+7. **Author order is substantive.** Instrumentation is the credibility-critical layer and is Vinita's;
    the framing plausibly moves her to co-first. Decide a *proposed* order before the sync rather than
    improvising. (cf. pilot README ownership split.)
 
-9. **Fast-follower risk.** The area is hot and closing. A dated arXiv post + the public artifact protect
+8. **Fast-follower risk.** The area is hot and closing. A dated arXiv post + the public artifact protect
    priority better than a stealth repo or a deadline-driven scramble. (cf.
    [`../07-venues/venues.md`](../07-venues/venues.md).)
 
-10. **Don't cite vendor headline numbers** (model-launch blogs, SWE-bench Pro marketing figures) as
-    research evidence — use the paper plus your own measurement. (cf. primer Part E #5.)
+9. **Don't cite vendor headline numbers** (model-launch blogs, SWE-bench Pro marketing figures) as
+   research evidence — use the paper plus your own measurement. (cf. primer Part E #5.)

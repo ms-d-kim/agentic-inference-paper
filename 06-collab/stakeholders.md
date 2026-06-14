@@ -7,18 +7,14 @@
   (2) pilot design review; (3) who owns instrumentation vs analysis; (4) authorship expectations,
   in writing.
 
-- **NVIDIA (manager: Nick).** Summer scope being set. Keep this repo public-infra only. The
-  product-side twin of C1 (metering, C5) is discussed at work and built internally if at all —
-  never in this repo. **Open item:** one-line disclosure of the outside paper — sent / decided?
-  Track the outcome here. This gates whether the repo can ever go public.
+- **NVIDIA (manager: Nick).** Summer internship — the product / customer-discovery side. The metering
+  twin of C1 (C5) is the work-side product angle, distinct from this open measurement paper.
 
 - **Faculty:** none attached (Tambe assessed a poor fit for the software-systems framing). Revisit
   only if a specific gap needs lab resources/compute. **(2026-06-14 flag:** Tambe's group just published
   *Agent Memory* (2606.06448) — now our closest characterization competitor. The faculty who passed is
   now adjacent prior art; note for positioning/etiquette.)
 
-## IP / publication separation (standing constraint)
-Two co-authors at companies that compete in inference (NVIDIA, Together). Mitigation built into the
-design: public benchmarks + open infra (vLLM/SGLang) only, no proprietary stacks. Before anything
-goes PUBLIC: each co-author clears their employer's publication-review process. Use personal
-accounts/emails for commits on this side project.
+## Scope note
+Public benchmarks + open infra (vLLM/SGLang) only — a design choice for **reproducibility**, not for any
+other reason.

@@ -53,8 +53,8 @@ kill criterion; killed ideas move to `graveyard.md`. Check the graveyard before 
 ## C5 — Iteration-economics metering (product-shaped)
 - **Claim:** cost-per-verified-iteration and realized-vs-available locality as first-class serving
   metrics/SLOs; reference implementation on open infra.
-- **Status:** the PM-role twin of C1. **Build internally at NVIDIA if at all — keep OUT of this repo**
-  (IP separation). Design notes only.
+- **Status:** the product / PM twin of C1 — out of scope for this paper (it's the product side).
+  Design notes only.
 
 ## C6 — Harness-conditional benchmarking methodology
 - **Claim:** quantify harness/model attribution (home-field advantage) and cost-per-success norms.

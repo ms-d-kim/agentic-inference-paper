@@ -79,10 +79,8 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 1. **Co-author alignment:** confirm Vinita agrees C1 (measurement) is the lead, not a recipe paper.
 2. **Author order:** instrumentation is the credibility-critical layer and is Vinita's — decide a
    *proposed* order before the sync.
-3. **NVIDIA disclosure:** has the one-line outside-paper disclosure been sent/cleared? Gates whether
-   this repo can go public. (`06-collab/stakeholders.md`)
-4. **Compute funding:** Stanford / NVIDIA credits / personal?
-5. **Reconcile the old planning doc** to one venue (MLSys 2027) and one lead (C1).
+3. **Compute funding:** Stanford / NVIDIA credits / personal?
+4. **Reconcile the old planning doc** to one venue (MLSys 2027) and one lead (C1).
 
 ## Framing-precision corrections (carry into the writeup)
 - Sutradhara is **synthetic-at-production-scale**, not real production; it attributes cache collapse
@@ -104,7 +102,7 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 - `04-ideas/` — `candidates.md` (C1–C6), `graveyard.md` (killed ideas; check before "new" ideas).
 - `05-experiments/pilot/` — pilot design doc (`README.md`), `experiments/matrix.yaml`,
   `harness/trace_schema.py` (metric contract, runs), `harness/run_pilot.py` (skeleton w/ ownership seams).
-- `06-collab/stakeholders.md` — Vinita / NVIDIA / faculty + IP separation.
+- `06-collab/stakeholders.md` — Vinita / NVIDIA / faculty.
 - `07-venues/venues.md` — venue tracking.
 
 ## How to continue in Code/Cowork

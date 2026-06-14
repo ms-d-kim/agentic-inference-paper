@@ -209,6 +209,7 @@ cost over all attempts ÷ verified tasks) — and a **kill gate** decides scale-
 STATUS.md                                ← current state, read first
 CHANGELOG.md                             Change & rollback log (decisions, keyed to commits)
 docs/
+  overview.md                            One-page reference: what / landscape / gap / problem / approach / limits
   agentic-inference-brief.pdf / .html    Annotated study brief — every paper summarized (start here to learn the area)
   agentic-inference-primer.md            Serving mental model + the agentic frontier
   inference-systems-reading-map.md       Canonical inference-systems papers (verified arXiv IDs)

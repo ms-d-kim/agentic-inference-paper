@@ -118,8 +118,7 @@ placement). Read each paper by asking which of those two it does.
 9. **Training-era vs inference-era papers.** Megatron/GPipe/ZeRO are training papers; their parallelism
    ideas transfer to inference but the regimes differ. Cite them for the concept, not as inference benchmarks.
 10. **The production stacks are mostly closed.** TensorRT-LLM, FasterTransformer, Triton, NVIDIA Dynamo,
-    TGI, llm-d. The "literature" of production is often code, not arXiv. The NVIDIA work lives here —
-    and stays out of this repo (IP separation; see [`../06-collab/stakeholders.md`](../06-collab/stakeholders.md)).
+    TGI, llm-d. The "literature" of production is often code, not arXiv — know these stacks exist.
 11. **Everything is the KV cache.** size (MQA/GQA/MLA), reuse (radix/prefix/prompt cache), eviction
     (H2O/StreamingLLM/KVFlow), precision (KIVI), placement (disaggregation/Mooncake). For agentic
     serving this is THE resource — which is exactly why C1 centers on it.
