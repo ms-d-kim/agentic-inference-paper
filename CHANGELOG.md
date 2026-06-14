@@ -20,6 +20,9 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-14 — Project named GRIT; repo renamed
+Named the project **GRIT** (*GPU Reuse under Interleaved Traffic*) — ties the metric brand ("Cost of Grit") to the experiment. Threaded through the README title/intro, `docs/overview.md`, and the Figure-1 caption / node / band / legend. Renamed the GitHub repo `agentic-inference-paper` → `grit` (GitHub keeps a redirect from the old URL; local remote auto-updated) and refreshed the repo description. Rollback: `gh repo rename agentic-inference-paper` + `git revert` this commit.
+
 ### 2026-06-14 — Ecosystem figure restyled to NeurIPS/ICLR look
 Replaced the "AI-generated" palette (ivory background, ~8 hue accents, rounded frosted cards) in `docs/ecosystem-map.html` with a **systems-paper figure aesthetic**: pure-white canvas, **titled group boxes** (PERSONAS · CLIENTS · OPEN SERVING ENGINES · VENDOR · THIS WORK), grayscale white-fill nodes with thin black borders, Helvetica labels + a Times figure caption/key, and **directed arrowheads** trimmed to box borders. Color is now **functional and two-tone only** — red = the orchestrator↔engine seam / interleaving (the problem), blue = this work / its outputs (the contribution); everything else black/gray. Verified via headless-Chrome render.
 

@@ -1,10 +1,11 @@
-# Project Overview (reference blurb)
+# GRIT — project overview (reference blurb)
 
 *A self-contained one-pager: what this is, the landscape, the gap, the problem, the approach, and the
 limits. For quick reference / pasting into a talk or an intro email.*
 
 ## What this project is
-A **measurement-and-characterization study** of how *agentic* LLM workloads stress an inference server —
+**GRIT** (*GPU Reuse under Interleaved Traffic*) is a **measurement-and-characterization study** of how
+*agentic* LLM workloads stress an inference server —
 and what that costs per unit of useful work. Not a new system, scheduler, or kernel: a rigorous,
 reproducible **measurement** built only on **public benchmarks** (SWE-bench Verified, τ²-bench) and
 **open infrastructure** (vLLM / SGLang). Target venue: MLSys 2027 Industry Track (stretch) / NeurIPS

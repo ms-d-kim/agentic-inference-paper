@@ -1,8 +1,9 @@
-# Agentic-Serving Characterization
+# GRIT — GPU Reuse under Interleaved Traffic
 
 > *When chat and agents share one serving engine, how much of an agent's cache reuse actually survives — and what does the lost reuse cost per task the agent completes?*
 
-A measurement-and-characterization study of **agentic inference serving**. We quantify the
+**GRIT** (*GPU Reuse under Interleaved Traffic*) is a measurement-and-characterization study of
+**agentic inference serving**. We quantify the
 **realized-vs-available cache-locality gap** under realistic mixed (chat × agent) traffic and express
 it as the **"Cost of Grit"** — cost per *verified task* ([`docs/metric-design.md`](docs/metric-design.md)) —
 using only **public benchmarks** (SWE-bench Verified, τ²-bench) and **open infrastructure** (vLLM / SGLang).
