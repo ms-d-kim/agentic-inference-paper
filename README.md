@@ -27,6 +27,12 @@ So: under realistic mixed traffic on a *bounded* cache, how much of the **availa
 **realized**, what *drives* the gap, and what does it cost per useful (verified) unit of work? No one
 has measured this cleanly on open infrastructure — that's the opening.
 
+*Why is reuse lost?* The orchestrator (LangGraph/CrewAI) and the serving engine (vLLM/SGLang) are
+decoupled — the engine is **workflow-agnostic**, blind to the agent loop and the coming tool pause. The
+2026 frontier splits into **declaring** that contract via hints (Dynamo, KVFlow, Helium, HexAGenT,
+Cortex) vs **inferring** it engine-side (Continuum/CacheTTL, GoodServe); nobody has measured the *value
+of that awareness* on open infra under mixed traffic. That's our wedge.
+
 ## Contributions
 
 | | Contribution | Status |
@@ -63,6 +69,37 @@ in [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
 
 ---
 
+## Methodology (at a glance)
+
+The pilot pipeline: build mixed (or isolated) workload → run the agent on an open engine under a
+bounded, policy-controlled KV cache → emit a trace → recover the **locality gap** (available vs.
+realized reuse) offline, and the **Cost of Grit** (cost per *verified task*, all attempts counted) →
+gate on kill criteria before scaling. Metric: [`docs/metric-design.md`](docs/metric-design.md); open
+design issues to settle first: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
+
+```mermaid
+flowchart TD
+  A["Public benchmark tasks<br/>tau2-bench / SWE-bench Verified"] --> C["Build workload"]
+  B["Chat trace<br/>Azure / BurstGPT"] --> C
+  C -->|"isolated (agent only)"| D["Run ReAct agent loop"]
+  C -->|"mixed (rate-matched chat + agent)"| D
+  D --> E["Serving engine: vLLM / SGLang<br/>bounded KV; policy: none / LRU / retain-during-tool"]
+  E --> F["OTel trace: model + tool spans,<br/>cache and eviction events"]
+  F --> G["Offline infinite-cache replay<br/>--> available reuse"]
+  F --> H["Engine counters<br/>--> realized reuse"]
+  G --> I["Locality gap<br/>= available - realized"]
+  H --> I
+  F --> J["Cost accounting, all attempts<br/>GPU-seconds / dollars / Joules"]
+  I --> K["Cost per verified task<br/>the 'Cost of Grit' curve<br/>vs horizon x policy x tenancy"]
+  J --> K
+  K --> L{"Kill criteria met?<br/>gap exceeds noise; curve super-linear"}
+  L -->|"yes"| M["Scale the matrix (V1)"]
+  L -->|"no"| N["Reframe / kill fast"]
+```
+
+> Note: the harness is a scaffold and the metric/trace contract is under redesign (nine open design
+> issues gate GPU spend) — the diagram is the *intended* pipeline, not a finished system.
+
 ## Repository layout
 
 ```
@@ -72,6 +109,7 @@ docs/
   agentic-inference-primer.md            Serving mental model + the agentic frontier
   inference-systems-reading-map.md       Canonical inference-systems papers (verified arXiv IDs)
   threats-to-validity.md                 Reviewer-defense checklist + methods/artifact commitments
+  metric-design.md                       The "Cost of Grit" metric decision (cost-per-verified-task)
 02-literature/
   sota-verified-2026.md                  Citation ledger — source of truth (✓ / ⚠)
   reading-queue.md                       Prioritized reading

@@ -45,6 +45,8 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | Aragog | 2511.20975 | JIT model routing for agentic workflows | ✓ |
 | AWO (meta-tools) | 2601.22037 | compile recurring behaviors into deterministic meta-tools | ✓ |
 | CONCUR | 2601.22705 | ICML 2026 — congestion-based concurrency control for agentic batch inference | ✓ |
+| HexAGenT | 2605.16637 | workflow- & heterogeneity-aware scheduling; request as an online-revealed DAG (verified 2026-06-14) | ✓ |
+| Cortex | 2510.14126 | workflow-aware resource pooling/scheduling from a compiled call graph + per-request SLO slack; notes platforms are "workflow-agnostic" (verified 2026-06-14) | ✓ |
 
 > **Adjacent (not agent-specific):** *FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention* (arXiv
 > 2606.09079 ✓, Tencent et al.) — a learned Neural Memory Indexer predicts *query-critical* KV chunks
@@ -55,6 +57,25 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 > (not a drop-in vLLM/SGLang policy for the Qwen pilot); preliminary, project suspended — treat figures
 > as unsettled.
 
+### The orchestrator↔engine seam: declared vs. inferred (verified 2026-06-14)
+
+By default the orchestrator (LangGraph/CrewAI) and the engine (vLLM/SGLang) are decoupled: the engine
+sees a flat stream of independent requests and is **workflow-agnostic** (Cortex's word) — blind to the
+agent loop, the coming tool pause, and cross-request prefix sharing. The 2026 frontier is a race to
+break this seam, and it splits into two families:
+- **Declared** (the agent *tells* the engine its structure/intent): Dynamo `nvext.agent_hints`,
+  KVFlow (Agent Step Graph), Helium (query plan), HexAGenT (online-revealed DAG), Cortex (compiled
+  call graph + SLO slack), Autellix (agents-as-programs), Sutradhara (explicit orchestrator-engine co-design).
+- **Inferred** (the engine *guesses*, no signal): Continuum/CacheTTL (TTL heuristic — the agent will be
+  back), GoodServe (infers task type from the prompt at the router).
+- **Cross-request/agent KV awareness** (a sub-form): KVCOMM, SparseX, TokenDance share/dedupe KV across
+  interleaved or cooperating agents.
+
+**Our wedge:** nobody has *standardized* the contract, and nobody has *measured* — on open infra, under
+realistic mixed traffic — how much reuse is actually lost when it is absent vs. present. That quantified
+**"value of awareness"** is the gap. (The hint interface, C4, is the *declared* approach — now pre-empted
+by Dynamo; see `04-ideas/candidates.md`.)
+
 ## Measurement / cost (the angle adjacent to ours)
 
 | Paper | arXiv | Note | Status |
@@ -63,6 +84,11 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | More with Less (turn-control for coding agents) | 2510.16786 | cost-per-patch (~$5.85 avg, ~$7.80 correct), 41–58 median turns — capability side, not serving | ✓ |
 | Latency-Reliability-Cost tradeoffs in agentic workflows | 2605.23929 | analytical tradeoff model | ✓ |
 | SWE-EVO (long-horizon SE benchmark) | 2512.18470 | multi-PR tasks, "Fix Rate" partial-progress metric | ✓ |
+| **Cost-of-Pass** (economic eval framework) | 2504.13359 | ICLR 2026 — expected $ for a *correct* solution (Farrell efficiency); the **academic anchor for our cost-per-verified-task**; we move it from the API black box into open-infra internals | ✓ |
+| Efficient Agents | 2508.02694 | efficiency–effectiveness tradeoff; 28.4% cost-of-pass improvement on GAIA (capability side) | ✓ |
+| EET (early termination for SE agents) | 2601.05777 | experience-driven early stopping; −32% avg cost, ≤0.2% resolution loss — the "when to stop gritting" lever | ✓ |
+| TokenPowerBench (energy) | AAAI | benchmarks **J/token** power draw of LLM inference — the energy numerator for the cost-of-grit | ✓ |
+| **GoodServe** (agentic goodput) | 2605.16867 | SJTU/CUHK-SZ — agentic **goodput** = E2E-SLO completions/s over heterogeneous resources; router-layer, *infers* task type (no hints); no cost-to-success, no released trace. The **throughput-side dual** of our cost-per-verified-task — see `../docs/metric-design.md` | ✓ |
 
 ## Industry / vendor benchmarks & systems (verified real online 2026-06-13)
 
@@ -108,8 +134,10 @@ confirmed this session. Some may be internal codenames, renamed, or hallucinated
 - **Agent Memory (2606.06448)** — ✗ likely wrong ID. A real paper "Agent Memory Below the Prompt"
   may exist at **2603.04428** — ⚠ NOT verified this session; confirm before use.
 - **AutoLab** (and its "+0.43" harness-ablation figure) — not verified; do not quote the figure.
-- **Inside the Scaffold**, **GoodServe**, **Self-Harness**, **lmcache-agent-trace**,
-  **ThunderAgent**, **Agentix@NSDI** — not verified this session.
+- **Inside the Scaffold**, **Self-Harness**, **lmcache-agent-trace**, **ThunderAgent**,
+  **Agentix@NSDI** — not verified this session.
+- **GoodServe** — ✓ RESOLVED 2026-06-14: real (arXiv 2605.16867, SJTU/CUHK-SZ); agentic goodput over
+  heterogeneous resources; promoted to the measurement/cost table above.
 - **CONCUR** — ✓ RESOLVED 2026-06-13: real (arXiv 2601.22705, ICML 2026); promoted to the mechanisms
   table above.
 

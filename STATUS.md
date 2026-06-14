@@ -50,6 +50,13 @@ those gate GPU spend — the pilot cell runs only after.
   GPU-seconds primarily, also $/Joules; cost-per-iteration as a diagnostic) — framed as goodput's
   economic dual; pending co-author sign-off. Applied doc-consistency fixes (next-step gate, brief section
   cross-refs + metric self-contradiction, GPU-idle wording, primer intro, reading-queue/budget wording).
+- 2026-06-14: verified the metric/seam literature online; wrote `docs/metric-design.md` (the
+  **cost-per-verified-task** decision — resolves pilot issues #1/#5). Resolved **GoodServe** (2605.16867,
+  agentic goodput = the throughput-side dual) UNVERIFIED → ✓; added newly-found competitors **HexAGenT**
+  (2605.16637) + **Cortex** (2510.14126, workflow-aware serving) and metric anchors **Cost-of-Pass**
+  (2504.13359, ICLR 2026), Efficient Agents (2508.02694), EET (2601.05777), TokenPowerBench. Added the
+  **"declared vs inferred"** orchestrator↔engine seam map (engine is workflow-agnostic by default; C4 =
+  the 'declared' approach, pre-empted). Added a Methodology Mermaid flowchart to the README.
 
 ## Honest assessment of the gap
 Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements
@@ -76,6 +83,7 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 - `docs/agentic-inference-primer.md` — expert primer + canonical reading list.
 - `docs/inference-systems-reading-map.md` — canonical inference-systems reading map (verified arXiv IDs).
 - `docs/threats-to-validity.md` — reviewer-defense checklist + methods/artifact commitments.
+- `docs/metric-design.md` — the "Cost of Grit" metric decision (cost-per-verified-task); resolves #1/#5.
 - `docs/agentic-inference-brief.pdf` / `.html` — annotated study brief (every key paper summarized in
   plain language; the readable companion to the primer + reading map).
 - `02-literature/` — `sota-verified-2026.md` (citation source of truth), `reading-queue.md`,

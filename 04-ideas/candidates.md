@@ -42,8 +42,11 @@ kill criterion; killed ideas move to `graveyard.md`. Check the graveyard before 
 - **Collision (2026-06-13, verified online):** NVIDIA Dynamo already SHIPS this interface —
   `nvext.agent_hints` = {priority, osl, speculative_prefill} + `cache_control {ephemeral, ttl}`
   (see `02-literature/sota-verified-2026.md`). The "propose the minimal spec" framing is pre-empted.
-- **Status:** ⚠ largely pre-empted. Re-scope to *measuring the marginal value of the existing Dynamo
-  hints on open infra* (a value study, not a spec proposal), or graveyard. Decide at the sync.
+- **Note (2026-06-14):** the *declared*-contract side is now broadly crowded — beyond Dynamo: KVFlow
+  (Agent Step Graph), Helium (query plan), HexAGenT (online-revealed DAG), Cortex (call graph + SLO
+  slack), Autellix. See the "declared vs inferred" seam map in `02-literature/sota-verified-2026.md`.
+- **Status:** ⚠ largely pre-empted. Re-scope to *measuring the value of awareness* (the marginal value
+  of the existing declared hints on open infra — a measurement, not a spec), or graveyard. Decide at the sync.
 
 ## C5 — Iteration-economics metering (product-shaped)
 - **Claim:** cost-per-verified-iteration and realized-vs-available locality as first-class serving
