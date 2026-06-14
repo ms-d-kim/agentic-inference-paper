@@ -72,9 +72,11 @@ for others to replay and reproduce the gap and the cost curve.
 
 ## The pilot cell (run first — de-risks everything)
 
-ReAct × τ²-bench × {isolated, mixed_0.50} × {lru, retain_during_tool} × 50 scenarios × 3 repeats
-= 600 trajectories on one vLLM config. ~1 week, likely <$300 of rented H100 time.
-Primary readouts: available vs realized hit rate; cost-per-verified-iteration; tool-gap distribution.
+ReAct × {τ²-bench, SWE-bench Verified} × {isolated, mixed_0.50} × {lru, retain_during_tool} × 50 × 3
+≈ 1,200 trajectories on one vLLM config. ~1–2 weeks, ~$500–600 of rented H100 time. (τ² is the cheap
+tool-gap probe; SWE-bench Verified is the long-horizon arm where the locality tax should be visible — a
+τ²-only pilot risks a false-negative kill of H1; see `experiments/matrix.yaml`.)
+Primary readouts: available vs realized hit rate; the Cost of Grit (cost per verified task); tool-gap distribution.
 (Config in `experiments/matrix.yaml`; metric contract in `harness/trace_schema.py`.)
 
 ---
@@ -184,3 +186,27 @@ a delta-method / bootstrap CI.
 judge-panel pass 2026-06-14 (items 10–13 + the #3/#7 sharpening + the success-invariance correction +
 two falsely-dismissed real competitors: Agent Memory 2606.06448, ThunderAgent 2602.13692). The
 headline-metric denominator [cost-per-verified-*task*, group-level] is a sync decision — see `docs/metric-design.md`.)*
+
+### Net-new from the 2026-06-14 judge re-review (pass 2)
+14. **(BLOCKER) SWE-bench Verified resolve-rate floor.** A bare ReAct loop on Qwen2.5-Coder-32B may
+    resolve only single-digit % of SWE-bench Verified — at 50 scenarios the verified-task *denominator*
+    could be ~2–5/cell, nulling the headline metric independent of bias. Add a **minimum-verified-task
+    floor** to the kill criteria; measure the resolve rate (or use a stronger scaffold) before scaling.
+15. **(BLOCKER) Per-request cache attribution may be infeasible on stock engines.** vLLM/SGLang expose
+    prefix-hit + eviction mostly as *server-wide* aggregates under continuous batching; H1 needs
+    *per-request, per-tenant* attribution ("did chat evict THIS agent's blocks"), which may require an
+    engine patch — materially changing the instrumentation scope. Run a feasibility spike before the sync.
+16. **vLLM vs SGLang are not directly comparable.** LRU paged caching vs RadixAttention tree eviction →
+    "realized hit / blocks evicted" mean different things and the policy knobs map differently. Treat
+    engine as a *stratification* variable with engine-specific metric definitions; never pool for the headline.
+17. **Trace-redistribution legality (gates C3; distinct from #13).** Confirm τ²-bench permits
+    redistributing *derived trajectories*; SWE-bench instances embed third-party repo code (not uniformly
+    MIT) and the trace embeds Qwen *model outputs* — scope released content to permissive repos or store
+    token-ID hashes/offsets, and confirm the model license permits releasing generated tokens.
+18. **Multi-week run drift.** If model/tokenizer/engine are re-pulled or upgraded mid-collection, the
+    "identical recorded token stream" (#11) and prefix-block hashes silently break. Freeze pinned local
+    artifacts + log a content hash per cell *before* run start; abort on drift.
+19. **The "settle issues before GPU spend" gate is partly circular.** #4 (which KV budget bites),
+    #11/#12 (stream/success invariance), and #14 (resolve rate) can only be answered by a micro-run.
+    Split the list into *settle-on-paper* vs *needs-a-micro-pilot*; make the first GPU spend an explicit
+    instrumentation + floor-rate spike, not the full 1,200-trajectory cell.

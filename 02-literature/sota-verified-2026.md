@@ -177,7 +177,7 @@ confirmed this session. Some may be internal codenames, renamed, or hallucinated
 - **Agent Memory (2606.06448)** — ✓ RESOLVED 2026-06-14 (judge panel caught a false ✗): **REAL** —
   *"Agent Memory: Characterization and System Implications of Stateful Long-Horizon Workloads"* (Omri,
   Gan, …, **Thierry Tambe**; Stanford et al., Jun 2026). First systems characterization of agent memory
-  (4-axis taxonomy) — a **close characterization competitor** (and Tambe is our faculty contact, see
+  (4-axis taxonomy) — a **close characterization competitor** (and Thierry Tambe is the Stanford faculty who *passed* on this project as a poor fit — yet his group now publishes the closest characterization prior art; a positioning flag, not a contact, see
   `06-collab/stakeholders.md`). The earlier guessed 2603.04428 was wrong; READ + differentiate (memory
   systems vs. our KV-locality / cost-per-task angle).
 - **AutoLab** (and its "+0.43" harness-ablation figure) — not verified; do not quote the figure.

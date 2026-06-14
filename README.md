@@ -89,7 +89,7 @@ interface — *pre-empted* by Dynamo's `agent_hints`), **C6** (harness-condition
 eviction/TTL/sharing/scheduling space is crowded; defensibility is the *bundle* (rigor + breadth + open
 reproducibility + the trace + precise framing), not any single number.
 
-> **Honesty markers.** Pilot is pre-data; the metric/trace contract is under active redesign (**nine
+> **Honesty markers.** Pilot is pre-data; the metric/trace contract is under active redesign (**the
 > open design issues gate GPU spend** — [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md)).
 > The headline denominator (cost per verified *task*, with cost-per-*iteration* as the diagnostic) is the
 > *proposed* decision in [`docs/metric-design.md`](docs/metric-design.md), **pending co-author
@@ -140,7 +140,7 @@ The five stages, and the design choice that makes each one *valid*:
    **Cost of Grit** curve over horizon × policy × tenancy.
 5. **Gate** — apply kill criteria (is the gap above noise? is the curve super-linear?) *before* scaling.
 
-Metric definition: [`docs/metric-design.md`](docs/metric-design.md). The thirteen open design issues that
+Metric definition: [`docs/metric-design.md`](docs/metric-design.md). The open design issues that
 gate GPU spend: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
 
 ```mermaid
@@ -200,7 +200,7 @@ in one **trace**; offline we derive the two quantities that matter — the **loc
 infinite-cache *replay* against the engine's *realized* hit counters) and the **Cost of Grit** (total
 cost over all attempts ÷ verified tasks) — and a **kill gate** decides scale-up vs. reframe.
 
-> Note: the harness is a scaffold and the metric/trace contract is under redesign (nine open design
+> Note: the harness is a scaffold and the metric/trace contract is under redesign (the open design
 > issues gate GPU spend) — the diagram is the *intended* pipeline, not a finished system.
 
 ## Repository layout

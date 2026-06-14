@@ -20,6 +20,12 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-14 — Judge re-review (pass 2) + contradiction fixes
+A second judge panel (re-convened fresh — the subagent-continue channel was unavailable) re-read the *corrected* repo, verified the pass-1 fixes landed (Agent Memory/ThunderAgent now ✓, success-invariance corrected, CHANGELOG accurate), and caught what pass 1 + my fixes missed:
+- **Fixed 3 internal contradictions:** issue-count (README still said "nine" in 2 line-wrapped spots — numeral now dropped to avoid churn); trajectory count (pilot README still said 600/<$300 single-arm — now 1,200/two-arm); **Tambe** (ledger called him "our faculty contact" but `stakeholders.md` says he passed on the project — reconciled: he is now *adjacent prior art* via Agent Memory 2606.06448; flagged in `stakeholders.md`).
+- **Recorded net-new pilot issues #14–#19** (`05-experiments/pilot/README.md`): SWE-bench resolve-rate floor (BLOCKER — denominator may not exist), per-request cache-attribution feasibility on stock engines (BLOCKER — may need an engine patch), vLLM↔SGLang non-comparability, trace-redistribution legality, multi-week run drift, circular "settle-before-spend" gate.
+- **Chair verdict:** accept-with-work; the #1 risk is that *no data exists and everything below the schema is `NotImplementedError`*, blocked on the unscheduled co-author sync + NVIDIA disclosure. Venue: **NeurIPS D&B floor for C3, MLSys stretch for C1, dated arXiv for priority.**
+
 ### 2026-06-14 — Adversarial judge-panel review (this entry; corrections committed alongside)
 Four parallel "judge" subagents (methodology · literature · contributions/novelty · dataset/artifact) reviewed the repo top-to-bottom; convergent verdict + prioritized critiques recorded in the chat transcript. **Corrections applied this pass (all reversible via the commit that carries them):**
 - **Fixed two false citation verdicts** (integrity — the core discipline): **Agent Memory `2606.06448`** (Omri/Tambe, Stanford — real characterization competitor) was wrongly marked ✗; **ThunderAgent `2602.13692`** (real program-aware system) was in the "maybe-hallucinated" bucket. Both flipped to ✓ and added (`sota-verified-2026.md`, `reading-queue.md`).

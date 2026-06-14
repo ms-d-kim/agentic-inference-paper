@@ -13,7 +13,9 @@
   Track the outcome here. This gates whether the repo can ever go public.
 
 - **Faculty:** none attached (Tambe assessed a poor fit for the software-systems framing). Revisit
-  only if a specific gap needs lab resources/compute.
+  only if a specific gap needs lab resources/compute. **(2026-06-14 flag:** Tambe's group just published
+  *Agent Memory* (2606.06448) — now our closest characterization competitor. The faculty who passed is
+  now adjacent prior art; note for positioning/etiquette.)
 
 ## IP / publication separation (standing constraint)
 Two co-authors at companies that compete in inference (NVIDIA, Together). Mitigation built into the
