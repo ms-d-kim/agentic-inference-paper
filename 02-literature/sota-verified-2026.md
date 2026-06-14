@@ -39,6 +39,7 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | ScaleSim | 2601.21473 | multi-agent simulation, invocation-distance memory mgmt | ✓ |
 | Aragog | 2511.20975 | JIT model routing for agentic workflows | ✓ |
 | AWO (meta-tools) | 2601.22037 | compile recurring behaviors into deterministic meta-tools | ✓ |
+| CONCUR | 2601.22705 | ICML 2026 — congestion-based concurrency control for agentic batch inference | ✓ |
 
 ## Measurement / cost (the angle adjacent to ours)
 
@@ -49,11 +50,15 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | Latency-Reliability-Cost tradeoffs in agentic workflows | 2605.23929 | analytical tradeoff model | ✓ |
 | SWE-EVO (long-horizon SE benchmark) | 2512.18470 | multi-PR tasks, "Fix Rate" partial-progress metric | ✓ |
 
-## Foundations (well-known; confirm exact ID/year before bibliography)
+## Foundations (verified 2026-06-13 per the working brief — 10/10 against recall)
 
-PagedAttention/vLLM 2309.06180 ✓ · Orca (OSDI'22) ⚠ · SGLang/RadixAttention 2312.07104 ⚠ ·
-DistServe 2401.09670 ⚠ · Sarathi-Serve ⚠ · FlashAttention 2205.14135 ⚠ · ReAct 2210.03629 ⚠ ·
-Reflexion 2303.11366 ⚠ · Toolformer 2302.04761 ⚠ · ReWOO 2305.18323 ⚠ · ToT 2305.10601 ⚠
+PagedAttention/vLLM 2309.06180 ✓ · Orca (OSDI'22, no arXiv) ✓ · SGLang/RadixAttention 2312.07104 ✓ ·
+DistServe 2401.09670 ✓ · Sarathi-Serve 2403.02310 ✓ · FlashAttention 2205.14135 ✓ · ReAct 2210.03629 ✓ ·
+Reflexion 2303.11366 ✓ · Toolformer 2302.04761 ✓ · ReWOO 2305.18323 ✓ · ToT 2305.10601 ✓ · MCP (standard) ✓
+
+The broader inference-systems canon (Splitwise, Mooncake, AlpaServe, FlashInfer, MQA/GQA, StreamingLLM,
+H2O, KIVI, Prompt Cache, Megatron/GPipe/ZeRO/Ring, quantization, speculative decoding) is mapped and
+verified in [`../docs/inference-systems-reading-map.md`](../docs/inference-systems-reading-map.md).
 
 ## ⚠ UNVERIFIED references carried over from June-10 notes — CHECK BEFORE USE
 
@@ -64,7 +69,9 @@ confirmed this session. Some may be internal codenames, renamed, or hallucinated
   exists at **2603.04428**; confirm which is meant.
 - **AutoLab** (and its "+0.43" harness-ablation figure) — not verified; do not quote the figure.
 - **Inside the Scaffold**, **GoodServe**, **Self-Harness**, **lmcache-agent-trace**,
-  **ThunderAgent**, **CONCUR**, **Agentix@NSDI** — not verified this session.
+  **ThunderAgent**, **Agentix@NSDI** — not verified this session.
+- **CONCUR** — ✓ RESOLVED 2026-06-13: real (arXiv 2601.22705, ICML 2026); promoted to the mechanisms
+  table above.
 
 ## Verdict (2026-06-13)
 

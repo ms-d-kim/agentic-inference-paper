@@ -18,6 +18,11 @@ earlier "best recipe / optimization" dead-end to measurement. Next concrete step
 - 2026-06-13: live SOTA re-verification — all core competitors confirmed real; mechanism space
   confirmed crowded; gap confirmed narrowed; primer + pilot scaffold built; several reading-queue
   references flagged UNVERIFIED.
+- 2026-06-13: reconciled the working brief into the repo — added the canonical inference-systems
+  reading map (`docs/inference-systems-reading-map.md`) and a threats-to-validity / methods checklist
+  (`docs/threats-to-validity.md`); resolved CONCUR (2601.22705, ICML 2026) UNVERIFIED → ✓; promoted
+  the foundations to ✓ (10/10) and added the Sarathi-Serve ID (2403.02310); corrected the MLSys 2027
+  venue detail (the earlier "Apr 11–15 / Crete" claim was wrong — MLSys runs in the US).
 
 ## Honest assessment of the gap
 Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements
@@ -42,6 +47,8 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 ## Repo map
 - `STATUS.md` — this file.
 - `docs/agentic-inference-primer.md` — expert primer + canonical reading list.
+- `docs/inference-systems-reading-map.md` — canonical inference-systems reading map (verified arXiv IDs).
+- `docs/threats-to-validity.md` — reviewer-defense checklist + methods/artifact commitments.
 - `02-literature/` — `sota-verified-2026.md` (citation source of truth), `reading-queue.md`,
   and PLACEHOLDER stubs for the prior-session survey / related-work / lit-review (paste real text in).
 - `04-ideas/` — `candidates.md` (C1–C6), `graveyard.md` (killed ideas; check before "new" ideas).

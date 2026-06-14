@@ -8,7 +8,9 @@ See [`STATUS.md`](STATUS.md) for current state.
 
 ## Layout
 ```
-docs/agentic-inference-primer.md     Expert primer + canonical reading list
+docs/agentic-inference-primer.md         Expert primer + mental model + agentic frontier
+docs/inference-systems-reading-map.md    Canonical inference-systems reading map (verified IDs)
+docs/threats-to-validity.md              Reviewer-defense checklist + methods/artifact commitments
 02-literature/
   sota-verified-2026.md              Citation source of truth (✓/⚠ verification status)
   reading-queue.md                   Prioritized reading (unverified refs flagged)

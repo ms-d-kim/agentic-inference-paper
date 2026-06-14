@@ -45,21 +45,25 @@ no-hallucinated-citations rule.*
 
 ## Part B — Canonical foundations (read these first)
 
-**Serving systems**
+**Serving systems** *(all ✓ verified 2026-06-13 per the working brief — 10/10 against recall)*
 - **PagedAttention / vLLM** — Kwon et al., SOSP 2023, arXiv 2309.06180 ✓. The paging model for KV cache; the de-facto open serving baseline.
-- **Orca** — Yu et al., OSDI 2022 ⚠ verify. Continuous (iteration-level) batching.
-- **SGLang / RadixAttention** — Zheng et al., arXiv 2312.07104 ⚠ verify. Prefix-sharing via a radix tree; the most relevant cache story to your hypotheses.
-- **DistServe** — Zhong et al., OSDI 2024, arXiv 2401.09670 ⚠ verify. Prefill/decode disaggregation for goodput.
-- **Sarathi-Serve** — Agrawal et al., OSDI 2024 ⚠ verify. Chunked prefill; throughput-latency tradeoff.
-- **FlashAttention** — Dao et al., arXiv 2205.14135 ⚠ verify. IO-aware exact attention.
-- **Speculative decoding** — Leviathan et al., arXiv 2211.17192 ⚠ verify. (Note: a *serving-engine* feature, not an orchestrator one.)
+- **Orca** — Yu et al., OSDI 2022 ✓ (no arXiv). Continuous (iteration-level) batching.
+- **SGLang / RadixAttention** — Zheng et al., arXiv 2312.07104 ✓. Prefix-sharing via a radix tree; the most relevant cache story to your hypotheses.
+- **DistServe** — Zhong et al., OSDI 2024, arXiv 2401.09670 ✓. Prefill/decode disaggregation for goodput.
+- **Sarathi-Serve** — Agrawal et al., OSDI 2024, arXiv 2403.02310 ✓. Chunked prefill; throughput-latency tradeoff.
+- **FlashAttention** — Dao et al., arXiv 2205.14135 ✓. IO-aware exact attention.
+- **Speculative decoding** — Leviathan et al., arXiv 2211.17192 ✓. (Note: a *serving-engine* feature, not an orchestrator one.)
 
-**Agent patterns**
-- **ReAct** — Yao et al., arXiv 2210.03629 ⚠ verify. Reason+act interleaving; the default loop.
-- **Reflexion** — Shinn et al., arXiv 2303.11366 ⚠ verify. Self-critique memory.
-- **Toolformer** — Schick et al., arXiv 2302.04761 ⚠ verify. Learned tool invocation.
-- **ReWOO / Plan-and-Execute** — Xu et al., arXiv 2305.18323 ⚠ verify. Decouple planning from execution.
-- **Tree of Thoughts** — Yao et al., arXiv 2305.10601 ⚠ verify. Search over reasoning branches.
+> The broader inference-systems canon (disaggregation, attention kernels, KV-cache compression,
+> parallelism, quantization, speculative decoding) is mapped and verified in
+> [`inference-systems-reading-map.md`](inference-systems-reading-map.md).
+
+**Agent patterns** *(all ✓ verified 2026-06-13)*
+- **ReAct** — Yao et al., arXiv 2210.03629 ✓. Reason+act interleaving; the default loop.
+- **Reflexion** — Shinn et al., arXiv 2303.11366 ✓. Self-critique memory.
+- **Toolformer** — Schick et al., arXiv 2302.04761 ✓. Learned tool invocation.
+- **ReWOO / Plan-and-Execute** — Xu et al., arXiv 2305.18323 ✓. Decouple planning from execution.
+- **Tree of Thoughts** — Yao et al., arXiv 2305.10601 ✓. Search over reasoning branches.
 
 **Protocols**
 - **MCP (Model Context Protocol)** — Anthropic, late 2024 ✓ (context). The emerging tool-interface standard.
