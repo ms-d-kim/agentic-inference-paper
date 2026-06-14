@@ -140,22 +140,50 @@ gate GPU spend: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.m
 
 ```mermaid
 flowchart TD
-  A["Public benchmark tasks<br/>tau2-bench / SWE-bench Verified"] --> C["Build workload"]
-  B["Chat trace<br/>Azure / BurstGPT"] --> C
-  C -->|"isolated (agent only)"| D["Run ReAct agent loop"]
-  C -->|"mixed (chat + agent; rate-match planned, issue #3)"| D
-  D --> E["Serving engine: vLLM / SGLang<br/>policy: none / LRU / retain-during-tool<br/>(bounded-KV axis planned, issue #4)"]
-  E --> F["OTel trace: model + tool spans,<br/>cache and eviction events"]
-  F --> G["Offline infinite-cache replay<br/>--> available reuse"]
-  F --> H["Engine counters<br/>--> realized reuse"]
-  G --> I["Locality gap<br/>= available - realized"]
+  %% --- nodes (grouped by role) ---
+  A["Public benchmark tasks<br/>τ²-bench · SWE-bench Verified"]:::input
+  B["Chat-trace baseline<br/>Azure LLM Inference · BurstGPT"]:::input
+  C["Build workload<br/>isolated vs. mixed"]:::proc
+  D["ReAct agent loop"]:::serve
+  E["Serving engine — vLLM / SGLang<br/>cache policy: none / LRU / retain-during-tool<br/>bounded-KV axis planned (issue #4)"]:::serve
+  F["OpenTelemetry trace<br/>model + tool spans · cache / eviction events"]:::data
+  G["Infinite-cache replay<br/>→ available reuse"]:::measure
+  H["Engine counters<br/>→ realized reuse"]:::measure
+  J["Cost accounting — all attempts<br/>GPU-seconds / dollars / Joules"]:::measure
+  I["Locality gap<br/>= available − realized"]:::result
+  K["Cost of Grit<br/>cost per verified task<br/>vs. horizon × policy × tenancy"]:::result
+  L{"Kill criteria met?<br/>gap exceeds noise · curve super-linear"}:::decision
+  M["Scale the matrix (V1)"]:::good
+  N["Reframe / kill fast"]:::bad
+
+  %% --- flow ---
+  A --> C
+  B --> C
+  C -->|"isolated (agent only)"| D
+  C -->|"mixed (chat + agent; rate-match planned, #3)"| D
+  D --> E
+  E --> F
+  F --> G
+  F --> H
+  F --> J
+  G --> I
   H --> I
-  F --> J["Cost accounting, all attempts<br/>GPU-seconds / dollars / Joules"]
-  I --> K["Cost per verified task<br/>the 'Cost of Grit' curve<br/>vs horizon x policy x tenancy"]
+  I --> K
   J --> K
-  K --> L{"Kill criteria met?<br/>gap exceeds noise; curve super-linear"}
-  L -->|"yes"| M["Scale the matrix (V1)"]
-  L -->|"no"| N["Reframe / kill fast"]
+  K --> L
+  L -->|"yes"| M
+  L -->|"no"| N
+
+  %% --- academic palette (muted fills, darker strokes, dark text) ---
+  classDef input    fill:#E8EEF7,stroke:#33527A,stroke-width:1px,color:#13243B;
+  classDef proc     fill:#EDEFF2,stroke:#5A6473,stroke-width:1px,color:#1E2632;
+  classDef serve    fill:#E3F0EC,stroke:#2E6F5E,stroke-width:1px,color:#10302A;
+  classDef data     fill:#FBF3E0,stroke:#9A7B27,stroke-width:1px,color:#3D3210;
+  classDef measure  fill:#EFEAF6,stroke:#5B4A8A,stroke-width:1px,color:#241C3A;
+  classDef result   fill:#E7F0FA,stroke:#1F4E79,stroke-width:2px,color:#0E2A45;
+  classDef decision fill:#FCEBD9,stroke:#B26A00,stroke-width:1px,color:#4A2C00;
+  classDef good     fill:#E3F1E1,stroke:#2F7D32,stroke-width:2px,color:#13351A;
+  classDef bad      fill:#F8E2E2,stroke:#A83232,stroke-width:2px,color:#4A1414;
 ```
 
 > Note: the harness is a scaffold and the metric/trace contract is under redesign (nine open design
