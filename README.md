@@ -1,11 +1,11 @@
 # Agentic-Serving Characterization
 
-> *How do agentic LLM workloads stress an inference server differently from chat — and what does that cost per unit of useful work?*
+> *When chat and agents share one serving engine, how much of an agent's cache reuse actually survives — and what does the lost reuse cost per task the agent completes?*
 
 A measurement-and-characterization study of **agentic inference serving**. We quantify the
 **realized-vs-available cache-locality gap** under realistic mixed (chat × agent) traffic and express
-it as **cost per _verified_ iteration** — the *"Cost of Grit"* — using only **public benchmarks**
-(SWE-bench Verified, τ²-bench) and **open infrastructure** (vLLM / SGLang).
+it as the **"Cost of Grit"** — cost per *verified task* ([`docs/metric-design.md`](docs/metric-design.md)) —
+using only **public benchmarks** (SWE-bench Verified, τ²-bench) and **open infrastructure** (vLLM / SGLang).
 
 Not a new system, recipe, or kernel — a rigorous, reproducible **measurement**.
 
@@ -18,33 +18,80 @@ Not a new system, recipe, or kernel — a rigorous, reproducible **measurement**
 
 ## The problem
 
-Chat is one prompt → one stream; its KV cache lives for a single turn. An **agent is a stateful loop**
-(model → tool → model → …): context grows monotonically, the model is re-entered many times against a
-mostly-shared prefix, the GPU idles during tool calls, and KV state becomes long-lived. Prefix caching
-*should* make this cheap — **if the cache isn't evicted first**.
+A chat request is one prompt → one stream; its KV cache (the stored attention state that lets the model
+skip recomputing history) lives for a single turn. An **agent is a stateful loop** — model → tool →
+model → … for tens to ~200 steps — so its context grows monotonically, the model is re-entered many
+times against a mostly-shared prefix, the GPU idles during tool calls, and KV state becomes long-lived.
+Prefix caching *should* make each re-entry nearly free — **if the cached prefix survives to the next step.**
 
-So: under realistic mixed traffic on a *bounded* cache, how much of the **available** reuse is actually
-**realized**, what *drives* the gap, and what does it cost per useful (verified) unit of work? No one
-has measured this cleanly on open infrastructure — that's the opening.
+Whether it does is genuinely contested in the 2026 literature, and the disagreement is the opening:
 
-*Why is reuse lost?* The orchestrator (LangGraph/CrewAI) and the serving engine (vLLM/SGLang) are
-decoupled — the engine is **workflow-agnostic**, blind to the agent loop and the coming tool pause. The
-2026 frontier splits into **declaring** that contract via hints (Dynamo, KVFlow, Helium, HexAGenT,
-Cortex) vs **inferring** it engine-side (Continuum/CacheTTL, GoodServe); nobody has measured the *value
-of that awareness* on open infra under mixed traffic. That's our wedge.
+- **Agentic AI Workload Characteristics** (UIUC/Intel, 2605.26297) profiles real agents and finds the
+  *available* reuse is very high (decode-dominated, with a read→write phase structure) — caching should win big.
+- **Sutradhara** (Microsoft Research, 2601.12967) finds hit rates *collapse* in practice — but it runs
+  **synthetic** requests at scale and attributes the collapse to intra-request churn + eviction, **not**
+  to multiple workloads sharing the engine.
+
+A high-reuse pole and a collapse pole that don't meet — because **no one has isolated the multi-tenant
+driver on open infrastructure.** The mechanistic root cause is the **orchestrator↔engine seam**: the
+engine is *workflow-agnostic* (Cortex's term) — it sees a flat stream of independent requests, blind to
+the agent loop, the imminent tool pause, and cross-request prefix sharing. The 2026 frontier is a
+scramble to break that seam, split between **declaring** the contract via hints/plans/DAGs (Dynamo
+`agent_hints`, KVFlow, Helium, HexAGenT, Cortex, Autellix) and **inferring** it engine-side
+(Continuum/CacheTTL's TTL, GoodServe's prompt-inference). That mechanism space is **crowded and
+well-funded** — which is exactly why we don't add another mechanism.
+
+**What's still unmeasured — our exact target.** Under realistic *mixed* chat×agent traffic on a
+*bounded* open-infra cache: (1) how far *realized* reuse falls below *available* reuse (the **locality
+gap**); (2) how much of that drop is caused by **interleaving** vs. the agent's own context churn; and
+(3) what the gap costs **per verified task the agent completes** (the *Cost of Grit*). The adjacent work
+each misses a piece: **AA-AgentPerf** measures agents-per-megawatt on a *closed* set (capacity, not
+cost-per-success); **Don't Break the Cache** measures at the provider-API black box (not open-infra
+internals); **GoodServe** *optimizes* goodput but doesn't tie it to cost or release a trace. The empty
+intersection — open infra + mixed traffic + interleaving isolated + cost tied to verified work, shipped
+as a public trace — is ours.
 
 ## Contributions
 
 | | Contribution | Status |
 |---|---|---|
-| **C1** — *lead* | The **cost-per-verified-iteration / "Cost of Grit" curve** + the realized-vs-available **cache-locality gap**, quantified on open infra | pilot pending |
-| **C3** — *artifact* | A released **mixed chat×agent, cost-labeled, OTel-format serving trace + harness** (no such public trace exists) | bundled with C1 |
+| **C1** — *lead* | The realized-vs-available **cache-locality gap** quantified on open infra, expressed as the **"Cost of Grit"** (cost per *verified task* — [`docs/metric-design.md`](docs/metric-design.md)) | pilot pending |
+| **C3** — *artifact* | A released **mixed chat×agent, cost-labeled, OpenTelemetry-format serving trace + collection harness** — no public *mixed, cost-labeled, open-infra* agentic trace exists | bundled with C1 |
 
-Secondary and parked/pre-empted candidates (C2, C4, C6) live in
-[`04-ideas/candidates.md`](04-ideas/candidates.md); killed ideas — with cause of death — in
-[`04-ideas/graveyard.md`](04-ideas/graveyard.md). The discipline: **measurement, not mechanism**
-(the eviction/TTL/sharing/scheduling space is crowded). Defensibility is the *bundle* —
-rigor + breadth + open reproducibility + the trace artifact + precise framing.
+**C1, technically.** Hold the model fixed (Qwen2.5-Coder-32B — the model-vs-system confound control) and
+vary the *serving* knobs: **horizon** (max agent iterations) × **cache policy** {none, LRU,
+retain-during-tool} × **tenancy** {isolated, mixed}, on both vLLM and SGLang — plus a **bounded-KV
+budget** (the knob that makes eviction bite) and a **rate-matched** mixed arm (the control that isolates
+interleaving from raw offered load), both of which are *planned additions the current scaffold lacks*
+(open issues #4 and #3). Two quantities:
+- **Locality gap** = *available* reuse (offline, infinite-cache replay) − *realized* reuse (online,
+  bounded-cache engine counters), on a common eligible-token denominator, in [0,1].
+- **Cost of Grit** = total cost over *all attempts* (failures included) ÷ verified tasks — in
+  **GPU-seconds** (primary), dollars, and Joules — reported as a **curve over horizon** and **at matched
+  success rate** so serving never gets credit for model capability. Decomposed `cost/iter × iters/task ÷
+  success-rate`, with the `cost/iter` term attributed to the locality gap.
+
+**C3, the target schema.** OpenTelemetry-style spans (per model call and per tool call) rolled into a
+per-task record. To make the offline replay *computable* and the interleaving effect attributable, the
+schema **must** carry token/prefix identity, cache-hit/eviction events, tenant provenance, and an
+attempt/retry structure with cost labels — **most of which the current scaffold does not yet record**
+(open issues #2 and #8; today it stores token *counts* and a single per-task cost). Plus pinned
+tokenizer/engine versions. Trace to be released CC-BY, harness Apache-2.0/MIT, targeting
+artifact-evaluation badging.
+
+Secondary / parked / pre-empted candidates — **C2** (cache-aware context-edit policy), **C4** (hint
+interface — *pre-empted* by Dynamo's `agent_hints`), **C6** (harness-conditional benchmarking) — are in
+[`04-ideas/candidates.md`](04-ideas/candidates.md); killed ideas with cause-of-death in
+[`04-ideas/graveyard.md`](04-ideas/graveyard.md). **Discipline: measurement, not mechanism** — the
+eviction/TTL/sharing/scheduling space is crowded; defensibility is the *bundle* (rigor + breadth + open
+reproducibility + the trace + precise framing), not any single number.
+
+> **Honesty markers.** Pilot is pre-data; the metric/trace contract is under active redesign (**nine
+> open design issues gate GPU spend** — [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md)).
+> The headline denominator (cost per verified *task*, with cost-per-*iteration* as the diagnostic) is the
+> *proposed* decision in [`docs/metric-design.md`](docs/metric-design.md), **pending co-author
+> ratification** — STATUS.md, the pilot README, `candidates.md`, and the harness still use the
+> cost-per-*iteration* form. Industry numbers (Dynamo, AA-AgentPerf) are motivation, never cited as evidence.
 
 ## Hypotheses
 
@@ -52,7 +99,7 @@ Each is falsifiable with a stated kill criterion (full design in
 [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md)):
 
 - **H1** — the locality gap is real on open infra, and multi-tenant **interleaving** is a *distinct* driver (separable from intra-agent churn).
-- **H2** — cost-per-verified-iteration grows **super-linearly** with horizon and is cache-policy-sensitive.
+- **H2** — the Cost of Grit (cost per verified task) grows **super-linearly** with horizon and is cache-policy-sensitive.
 - **H3** — tool-gap timing has exploitable **phase structure** that static eviction gets wrong.
 - **H4** — a small public **trace + harness reproduces H1–H2** (artifact-as-contribution).
 
@@ -63,27 +110,41 @@ ReAct × τ²-bench × {isolated, mixed} × {LRU, retain-during-tool} × 50 scen
 = 600 trajectories on one vLLM config  (~1 week, <$300)
 ```
 
-Readouts: available vs realized hit rate (**the gap**), cost-per-verified-iteration, tool-gap
-distribution. The metric contract and the open design issues to settle before spending GPU budget are
+Readouts: available vs realized hit rate (**the gap**), the Cost of Grit (cost per verified task),
+tool-gap distribution. The metric contract and the open design issues to settle before spending GPU budget are
 in [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
 
 ---
 
 ## Methodology (at a glance)
 
-The pilot pipeline: build mixed (or isolated) workload → run the agent on an open engine under a
-bounded, policy-controlled KV cache → emit a trace → recover the **locality gap** (available vs.
-realized reuse) offline, and the **Cost of Grit** (cost per *verified task*, all attempts counted) →
-gate on kill criteria before scaling. Metric: [`docs/metric-design.md`](docs/metric-design.md); open
-design issues to settle first: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
+A deliberately small, kill-fast pilot that de-risks the lead measurement before any cross-product spend.
+The five stages, and the design choice that makes each one *valid*:
+
+1. **Workload** — agent tasks from a public benchmark, optionally interleaved with a chat trace. The
+   mixed arm **must be rate-matched** (identical agent trajectories; chat as controlled background) so
+   the contrast isolates *tenancy/interleaving* from raw offered load — the current count-based merge
+   does *not* yet do this (open issue #3, the H1 confound).
+2. **Serve** — run the ReAct loop on vLLM/SGLang under a cache policy ∈ {none, LRU, retain-during-tool}
+   and a **bounded KV budget** so eviction actually bites (the budget is a *planned* first-class axis —
+   open issue #4; the scaffold currently leaves it unset).
+3. **Trace** — emit OpenTelemetry-style spans (per model + tool call) with cache/eviction events and
+   attempt structure — enough to make the offline replay *computable*.
+4. **Recover the quantities** — *available* reuse from an offline infinite-cache replay; *realized*
+   reuse from engine counters ⇒ the **locality gap**; cost across **all attempts** (GPU-s/$/J) ⇒ the
+   **Cost of Grit** curve over horizon × policy × tenancy.
+5. **Gate** — apply kill criteria (is the gap above noise? is the curve super-linear?) *before* scaling.
+
+Metric definition: [`docs/metric-design.md`](docs/metric-design.md). The nine open design issues that
+gate GPU spend: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
 
 ```mermaid
 flowchart TD
   A["Public benchmark tasks<br/>tau2-bench / SWE-bench Verified"] --> C["Build workload"]
   B["Chat trace<br/>Azure / BurstGPT"] --> C
   C -->|"isolated (agent only)"| D["Run ReAct agent loop"]
-  C -->|"mixed (rate-matched chat + agent)"| D
-  D --> E["Serving engine: vLLM / SGLang<br/>bounded KV; policy: none / LRU / retain-during-tool"]
+  C -->|"mixed (chat + agent; rate-match planned, issue #3)"| D
+  D --> E["Serving engine: vLLM / SGLang<br/>policy: none / LRU / retain-during-tool<br/>(bounded-KV axis planned, issue #4)"]
   E --> F["OTel trace: model + tool spans,<br/>cache and eviction events"]
   F --> G["Offline infinite-cache replay<br/>--> available reuse"]
   F --> H["Engine counters<br/>--> realized reuse"]
