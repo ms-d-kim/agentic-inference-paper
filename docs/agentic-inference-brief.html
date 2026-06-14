@@ -41,7 +41,7 @@
 <body>
 
 <h1>Agentic Inference &amp; Serving — Annotated Working Brief</h1>
-<p class="deck">Revised 14 Jun 2026 · a study-oriented edition with a plain-language summary of every key paper · Target: MLSys 2027 Industry Track (~Oct 2026, provisional) · public benchmarks + open infrastructure only</p>
+<p class="deck">Revised 14 Jun 2026 · a study-oriented edition with a plain-language summary of the key papers · Target: MLSys 2027 Industry Track (~Oct 2026, provisional) · public benchmarks + open infrastructure only</p>
 
 <div class="callout">
 <h4>How to read this document</h4>
@@ -65,7 +65,7 @@
 <dt>Horizon</dt><dd>how many steps an agent is allowed to take on a task.</dd>
 <dt>Tenancy / interleaving</dt><dd>multiple workloads (e.g., chat and agents) sharing one server, so their requests are mixed together and compete for the same cache.</dd>
 <dt>The locality gap</dt><dd>our central quantity: the difference between how much cached context <i>could</i> be reused (with unlimited memory) and how much actually <i>is</i> reused (under real, bounded, shared memory).</dd>
-<dt>Cost per verified iteration (&ldquo;the Cost of Grit&rdquo;)</dt><dd>our headline metric: the dollar/GPU cost of each agent step, counted against work that actually succeeded — capturing what it costs an agent to &ldquo;keep trying.&rdquo;</dd>
+<dt>Cost of Grit (the headline metric)</dt><dd>the resource cost (GPU-seconds, dollars, or energy) of an agent&rsquo;s work, charged against successful outcomes and counting the cost of failed attempts — capturing what an agent&rsquo;s &ldquo;keep trying&rdquo; actually costs. The <i>exact denominator</i> — per verified iteration vs. per completed task, and how failures are counted — is still an open design decision (see §5).</dd>
 </dl>
 </div>
 
@@ -73,15 +73,15 @@
 <p class="lede">This is a <b>measurement</b> paper, not a new system or technique. A chatbot answers one prompt and forgets it; an <b>agent</b> runs a long loop (think &rarr; use a tool &rarr; think again) whose memory grows the whole time and is re-read on every step. The server tries to keep that memory in a fast cache (the KV cache), but cache space is scarce and shared with other traffic, so much of it gets evicted and must be recomputed. We measure, on <b>open infrastructure</b> (freely available serving software) and <b>public benchmarks</b> (openly available task sets), <b>how much reuse is lost</b> under realistic mixed traffic and <b>what that loss costs per unit of useful work</b>.</p>
 <p>Two deliverables:</p>
 <ul>
-<li><b>The lead contribution — the &ldquo;Cost of Grit&rdquo; curve.</b> We quantify the gap between available and realized cache reuse (the locality gap) and express it as cost per <i>verified</i> agent iteration (cost counted only against steps that contributed to a successful outcome), as a function of how long the agent runs, what caching policy the server uses, and how heavily the server is shared.</li>
+<li><b>The lead contribution — the &ldquo;Cost of Grit&rdquo; curve.</b> We quantify the gap between available and realized cache reuse (the locality gap) and express it as the cost per unit of <i>verified</i> work (the precise denominator — per verified iteration vs. per completed task, counting failed-attempt cost — is an open design choice settled in §5), as a function of how long the agent runs, what caching policy the server uses, and how heavily the server is shared.</li>
 <li><b>The artifact contribution — a public dataset + tooling.</b> We release a recorded stream of mixed chat-and-agent traffic with cost labels, in a standard tracing format, plus the software that collected it. No comparable public dataset exists.</li>
 </ul>
 <p class="note">(Internally these are labelled C1 and C3; the full candidate list and the hypotheses are spelled out in plain language in sections 4&ndash;6, with their internal labels noted once for cross-reference.)</p>
 <p><b>Why this is defensible.</b> The space of <i>mechanisms</i> (clever cache or scheduling tricks) is extremely crowded — many well-funded teams are building them. Far fewer are doing a careful, reproducible <i>measurement</i> of what the problem is actually worth, in the open, tied to real task success. That measurement — the bundle of rigor, breadth, open reproducibility, and the released dataset — is the contribution.</p>
 
 <h2>2. Where we stand</h2>
-<p>The literature is fully mapped and fact-checked against live search (the project enforces a strict rule: no citation is used without verification, because earlier drafts contained invented references). The framing has settled from an earlier &ldquo;find the best recipe&rdquo; goal onto the measurement goal above. The competitive landscape — including very recent industry results (NVIDIA&rsquo;s Dynamo serving stack and Artificial Analysis&rsquo;s AA-AgentPerf benchmark, both summarized in section 7) — has been verified and folded in.</p>
-<p>The experiment (&ldquo;the pilot&rdquo;) is designed, but two independent critical reviews surfaced <b>seven design problems that must be fixed before spending money on GPUs</b> (detailed in section 6) — for example, the core metric is currently defined two inconsistent ways, and the data format cannot yet capture everything needed to compute it. The next concrete step is a co-design meeting with the collaborator who owns the server-internals work, to settle those, then run a small (~$300, ~1 week) pilot that will either confirm the effect or kill the idea quickly.</p>
+<p>The verified core citation ledger is current and fact-checked against live search (the project enforces a strict rule: no citation is used without verification, because earlier drafts contained invented references); a few references remain unresolved and the prose-synthesis documents are not yet written. The framing has settled from an earlier &ldquo;find the best recipe&rdquo; goal onto the measurement goal above. The competitive landscape — including very recent industry results (NVIDIA&rsquo;s Dynamo serving stack and Artificial Analysis&rsquo;s AA-AgentPerf benchmark, both summarized in section 8) — has been verified and folded in.</p>
+<p>The experiment (&ldquo;the pilot&rdquo;) is designed, but two independent critical reviews surfaced <b>nine design problems that must be fixed before spending money on GPUs</b> (detailed in section 5) — for example, the core metric is currently defined two inconsistent ways, and the data format cannot yet capture everything needed to compute it. The next concrete step is a co-design meeting with the collaborator who owns the server-internals work, to settle those, then run a small (~$300, ~1 week) pilot that will either confirm the effect or kill the idea quickly.</p>
 <p><b>Honest assessment:</b> the field is moving fast and the opening is narrowing — mechanism papers are already crowded out, and even individual measurements are adjacent to published work. What remains genuinely open is the specific intersection we target: the locality gap under realistic <i>mixed</i> traffic on open infrastructure, tied to verified work, released as a public dataset.</p>
 
 <h2>3. The contributions, in full</h2>
@@ -108,10 +108,10 @@
 </ul>
 
 <h2>5. The pilot experiment, the metric definitions, and what to fix first</h2>
-<p>The first experiment is deliberately small and designed to fail fast: run an agent (using <b>ReAct</b>, the standard reason-then-act loop — see section 8) on a public tool-use benchmark, once with the server to itself and once sharing it 50/50 with chat traffic, under two caching policies, across 50 tasks &times; 3 repeats = 600 runs on a single GPU configuration (~1 week, under $300). The readouts are the available-vs-realized reuse gap, the cost per verified iteration, and the distribution of tool-wait times.</p>
+<p>The first experiment is deliberately small and designed to fail fast: run an agent (using <b>ReAct</b>, the standard reason-then-act loop — see section 7) on a public tool-use benchmark, once with the server to itself and once sharing it 50/50 with chat traffic, under two caching policies, across 50 tasks &times; 3 repeats = 600 runs on a single GPU configuration (~1 week, under $300). The readouts are the available-vs-realized reuse gap, the cost per verified iteration, and the distribution of tool-wait times.</p>
 <p><b>Metric definitions (corrected).</b> <i>Available reuse</i> = the fraction of input that could be reused with unlimited cache (computed offline by replay). <i>Realized reuse</i> = the fraction actually reused under the real, bounded cache. <i>The locality gap</i> = available minus realized, both measured against the <b>same total</b>, so it stays between 0 and 1. <i>Cost per verified task</i> = total cost (including the cost of failed attempts) per task that succeeded — reported as a curve over run length, to avoid flattering the result by ignoring expensive failures. <i>Tool-wait time</i> is the time the agent spends waiting on a tool; note that this is <b>not</b> the same as GPU idle time, because under shared traffic the GPU serves other requests during that wait.</p>
 <div class="callout">
-<h4>Seven design issues to settle before spending GPU budget (from two critical reviews)</h4>
+<h4>Nine design issues to settle before spending GPU budget (from two critical reviews)</h4>
 <ol class="small" style="margin:4px 0 0">
 <li><b>The core metric is defined two ways.</b> The written definition (available minus realized, same denominator) and the code (which divides by reusable tokens and can go negative) disagree. Pick one; make code and docs match; enforce the 0&ndash;1 range.</li>
 <li><b>The data format can&rsquo;t yet compute the answer.</b> It records token <i>counts</i> but not which tokens, the global ordering/timestamps, or which cache entries were evicted and why — all needed to replay &ldquo;what could have been reused&rdquo; and to prove the mixing effect. Add those fields. (The same gap means calling it a standards-format trace is premature.)</li>
@@ -120,6 +120,8 @@
 <li><b>The cost metric has a survivorship bias.</b> Counting cost only on successes drops the expensive long runs that failed — exactly where the &ldquo;cost of grit&rdquo; lives. Count cost across all attempts, per successful task.</li>
 <li><b>Tool-wait time is being mistaken for GPU idle time.</b> Under shared traffic these differ; measuring idle time needs a server-wide utilization timeline.</li>
 <li><b>The runner doesn&rsquo;t produce the stated design.</b> The current loop ignores repeats and run-length and would yield 4 cells, not 600, and reports one global average instead of broken-out, paired results with error bars.</li>
+<li><b>Mixed-tenant cost attribution &amp; attempt structure are undefined.</b> The cost field is one number per task, with no rule for splitting shared GPU / tool / idle / chat cost and no way to represent failed attempts before a success — which cost-per-verified-task needs. Add an attempt/retry record + an accounting window + a pre-registered attribution rule.</li>
+<li><b>No experimental-hygiene controls.</b> No cache warmup/flush, process isolation, teardown, or cell-order randomization; cells run in fixed order and engine handles are never closed, so carryover/order effects would confound the result. Add them.</li>
 </ol>
 <p class="small" style="margin:6px 0 0"><b>Settle #1, #2, and #5 first</b> — they decide whether the headline number means anything.</p>
 </div>
@@ -168,7 +170,7 @@
 <div class="paper">
 <p class="ptitle">SGLang / RadixAttention <span class="meta">— Zheng et al., NeurIPS 2024 · arXiv 2312.07104 <span class="ok">✓</span></span></p>
 <p>SGLang is the other major open serving engine. Its key idea, <b>RadixAttention</b>, stores cached prefixes in a radix tree (a tree keyed by shared text prefixes) so that <i>any</i> requests sharing a beginning — system prompts, few-shot examples, conversation history, branching agent states — automatically reuse each other&rsquo;s KV cache, not just exact repeats. It also speeds up structured (e.g., JSON) outputs.</p>
-<p class="rel"><b>Why it matters to us:</b> this is the most directly relevant prior system — it is the best case for prefix reuse, so it sets the &ldquo;available reuse&rdquo; ceiling our gap measures against. We run it as one of our two engines.</p>
+<p class="rel"><b>Why it matters to us:</b> the most directly relevant prior system — the strongest realized-reuse case, and one of our two engines. (The &ldquo;available reuse&rdquo; ceiling itself comes from our offline infinite-cache replay, not from SGLang.)</p>
 </div>
 <div class="paper">
 <p class="ptitle">AlpaServe <span class="meta">— Li et al., OSDI 2023 · arXiv 2302.11665 <span class="ok">✓</span></span></p>
@@ -192,7 +194,7 @@
 <div class="paper">
 <p class="ptitle">StreamingLLM (attention sinks) &amp; H2O (heavy-hitter eviction) <span class="meta">— Xiao et al., ICLR 2024 / Zhang et al., NeurIPS 2023 · arXiv 2309.17453, 2306.14048 <span class="ok">✓</span></span></p>
 <p>Two influential ways to <i>drop</i> KV when memory is tight while keeping quality. <b>StreamingLLM</b> found that keeping a few initial &ldquo;sink&rdquo; tokens plus a recent window is enough for stable infinite-length streaming. <b>H2O</b> keeps the tokens that have historically received the most attention (&ldquo;heavy hitters&rdquo;) and evicts the rest.</p>
-<p class="rel"><b>Why it matters to us:</b> these are the eviction policies whose behavior our realized-reuse measurement captures — and whose simple heuristics our phase-structure hypothesis argues are wrong for agents.</p>
+<p class="rel"><b>Why it matters to us:</b> representative eviction heuristics. Our pilot specifically tests LRU and retain-during-tool (not these two), but the phase-structure hypothesis argues such static heuristics evict at the wrong moments for agents.</p>
 </div>
 <div class="paper">
 <p class="ptitle">KIVI <span class="meta">— Liu et al., 2024 · arXiv 2402.02750 <span class="ok">✓</span></span></p>
@@ -202,7 +204,7 @@
 <div class="paper">
 <p class="ptitle">FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention <span class="meta">— Tencent et al., 2026 · arXiv 2606.09079 <span class="ok">✓</span> · preliminary/suspended</span></p>
 <p>A recent, learned approach to KV management: a small &ldquo;Neural Memory Indexer&rdquo; periodically <b>predicts which cached chunks the model will actually need next</b> and keeps only those, shrinking the cache to ~13.5% of full size while holding accuracy. Notably, the predictor is trained on its own (as a retrieval model) without loading the huge backbone model. It is built into the DeepSeek-V4 architecture and is an early, now-suspended project, so its numbers are preliminary.</p>
-<p class="rel"><b>Why it matters to us:</b> it is a <i>learned</i> version of exactly what our phase-structure hypothesis proposes (predict which KV matters), which both validates the premise and confirms the mechanism is being actively pursued — pushing us toward measuring the gap rather than building the predictor. Important distinction: this works <i>within a single long request</i>; our project is about <i>across</i> mixed requests on a shared cache, so it does not pre-empt the lead measurement.</p>
+<p class="rel"><b>Why it matters to us:</b> it is a <i>learned cousin</i> of our phase-structure hypothesis (predicting which KV matters), which both validates the premise and confirms the mechanism is being actively pursued — pushing us toward measuring the gap rather than building the predictor. Important distinction: this works <i>within a single long request</i>; our project is about <i>across</i> mixed requests on a shared cache, so it does not pre-empt the lead measurement.</p>
 </div>
 
 <h3>Spreading work across GPUs, and shrinking the model (background)</h3>
@@ -311,7 +313,7 @@
 <div class="paper">
 <p class="ptitle">AA-AgentPerf <span class="meta">— Artificial Analysis · artificialanalysis.ai <span class="ok">✓ real</span></span></p>
 <p>A new hardware benchmark for the agent era. It measures how many concurrent agents a system can serve on <b>real coding-agent trajectories</b> (up to 200 steps, contexts up to ~131,000 tokens) while meeting latency targets, with the headline metric being <b>agents served per megawatt</b> of power. It compares NVIDIA, AMD, and Google hardware. The underlying task set is kept private (held out), and it does not yet tie results to per-task cost or success.</p>
-<p class="rel"><b>Why it matters to us:</b> it validates that agent serving on long, real trajectories is the workload of interest — but it measures <i>hardware capacity</i> (agents per megawatt), not <i>cost per verified iteration</i> tied to task success, so our lead metric stays distinct. Because its dataset is closed, it also <b>strengthens</b> our &ldquo;no public agentic trace&rdquo; claim.</p>
+<p class="rel"><b>Why it matters to us:</b> it validates that agent serving on long, real trajectories is the workload of interest — but it measures <i>hardware capacity</i> (agents per megawatt), not <i>cost per verified iteration</i> tied to task success, so our lead metric stays distinct. Because its dataset is closed, it also <b>strengthens</b> our narrower claim: no public <i>mixed, cost-labeled, open-infra</i> agentic trace.</p>
 </div>
 <div class="paper">
 <p class="ptitle">SemiAnalysis InferenceMAX / InferenceX; NVIDIA NemoClaw / OpenShell <span class="meta">— inferencex.semianalysis.com; nvidia.com/nemoclaw <span class="ok">✓ real</span></span></p>
@@ -332,7 +334,7 @@
 
 <h2>10. Immediate next actions</h2>
 <ul>
-<li><b>Co-design meeting:</b> settle the seven design issues in section 5 — lead with the metric definition, the data-format fields, and the cost-survivorship fix; confirm the measurement framing is the lead; agree who does what; decide author order in writing.</li>
+<li><b>Co-design meeting:</b> settle the nine design issues in section 5 — lead with the metric definition, the data-format fields, and the cost-survivorship fix; confirm the measurement framing is the lead; agree who does what; decide author order in writing.</li>
 <li><b>Redesign</b> the metric and data format accordingly, then run the small pilot and check it against the kill criteria before scaling up.</li>
 <li><b>Decide the hint-interface idea&rsquo;s fate</b> — re-scope to measuring the value of the existing (Dynamo) hints on open infrastructure, or drop it.</li>
 <li><b>Reconcile</b> the old planning notes to one venue and one lead idea.</li>

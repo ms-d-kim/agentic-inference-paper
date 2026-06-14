@@ -69,7 +69,8 @@ class ModelCallSpan:
 
 @dataclass
 class ToolCallSpan:
-    """One tool execution; the source of GPU-idle 'tool-call gaps'."""
+    """One tool execution; the source of 'tool-call gaps' (tool wall-time — not necessarily
+    GPU-idle under mixed tenancy; see open issue 6 in the pilot README)."""
     request_id: str
     task_id: str
     iteration_index: int
@@ -114,7 +115,9 @@ class TaskRecord:
 
     @property
     def locality_gap(self) -> Optional[float]:
-        """available - realized reuse, in [0,1]. The core C1/B quantity."""
+        """available - realized reuse, in [0,1]. The core locality-gap quantity.
+        NOTE: definition under revision — see open issue 1 in the pilot README
+        (must use a common eligible-token denominator and clamp to [0,1])."""
         if self.reusable_tokens_infinite_cache and self.realized_reused_tokens is not None:
             total = self.reusable_tokens_infinite_cache
             if total == 0:

@@ -10,7 +10,7 @@ it as **cost per _verified_ iteration** — the *"Cost of Grit"* — using only 
 Not a new system, recipe, or kernel — a rigorous, reproducible **measurement**.
 
 - **Target:** MLSys 2027 Industry Track (~Oct 2026) — *provisional, pending CFP* ([`07-venues/venues.md`](07-venues/venues.md))
-- **Status:** citation ledger complete · pilot design in review · next step is the de-risking pilot cell
+- **Status:** citation ledger complete · pilot design in review (open design issues gate GPU spend) · next step is the co-design / metric-redesign meeting, then the pilot cell
 - **Start here:** [`STATUS.md`](STATUS.md) — the single source of "where are we"
 - **New to the area?** [`docs/agentic-inference-brief.pdf`](docs/agentic-inference-brief.pdf) — an annotated study brief that summarizes every key paper in plain language (jargon explained, no shorthand)
 

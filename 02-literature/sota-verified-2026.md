@@ -17,7 +17,7 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | Paper | arXiv | Authors / Affil | One-line finding | Status |
 |---|---|---|---|---|
 | Agentic AI Workload Characteristics | 2605.26297 | Yuan, Nayak, Kundu, Talati — UIUC / Gimlet / Intel | Agentic serving is decode-dominated with high KV reuse; read/explore→execute/write tool phases | ✓ |
-| Sutradhara (orchestrator-engine co-design) | 2601.12967 | Biswas, Goel, Mohan, Khare, Parayil, Ramjee, Bansal — MSR / M365 | Tool calls 30–85% of FTR latency; KV hit rates collapse despite reuse | ✓ |
+| Sutradhara (orchestrator-engine co-design) | 2601.12967 | Biswas, Goel, Mohan, Khare, Parayil, Ramjee, Bansal — MSR / M365 | Tool calls 30–85% of time-to-first-token (TTFT); KV hit rates collapse despite reuse | ✓ |
 | ServeGen (workload char + generator) | 2505.09999 | Xiang et al. — Alibaba / PKU (NSDI'26) | Real prod characterization (billions req, 12 models, 4mo) + open-source generator | ✓ |
 | CPU-Centric Perspective on Agentic AI | 2511.00739 | Georgia Tech / Intel | Host-CPU tool processing dominates latency on heterogeneous CPU–GPU | ✓ |
 | Compiling Agentic Workflows into LLM Weights | 2605.22502 | Dennis, Patil, Shabahang, Guo — Univ. Melbourne | "Subterranean agent": near-frontier quality at ~1/100 cost (the internalize bet) | ✓ |

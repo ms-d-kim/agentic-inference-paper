@@ -22,7 +22,8 @@ Helium (2603.16104), SparseX (2606.01751), More with Less (2510.16786).
 motivation only, never as research evidence):**
 9. **NVIDIA Dynamo — agentic inference** (developer.nvidia.com/blog/full-stack-optimizations-for-agentic-inference-with-nvidia-dynamo)
    — KV-aware router + `nvext.agent_hints` spec. HIGH priority: bears directly on C4 (pre-emption) and
-   the H1 framing (their high single-session hit rates = the "managed/available" pole).
+   the H1 framing (their 85–97% are *realized* hit rates under their own routing — a managed/realized
+   reference point, NOT our infinite-cache "available" pole).
 10. **AA-AgentPerf (Artificial Analysis)** (artificialanalysis.ai/articles/aa-agentperf) — methodology:
     agents/MW, SLO tiers, closed test set; bears on C1 distinctness + C3 (no public trace).
 11. **FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention** (2606.09079 ✓, Tencent et al.) — learned

@@ -11,7 +11,9 @@ benchmarks (SWE-bench Verified, τ²-bench) + open infra (vLLM/SGLang) only. The
 OTel-format trace + harness** as the cross-cutting artifact. The citation ledger / SOTA pass is done
 and re-verified live (`02-literature/sota-verified-2026.md`); prose synthesis (survey, lit-review,
 related-work) is still pending — those files are placeholders. Framing has correctly converged from an
-earlier "best recipe / optimization" dead-end to measurement. Next concrete step: run the pilot cell.
+earlier "best recipe / optimization" dead-end to measurement. **Next concrete step: the co-design /
+metric-redesign meeting** to settle the open pilot-design issues (`05-experiments/pilot/README.md`);
+those gate GPU spend — the pilot cell runs only after.
 
 ## What changed recently
 - 2026-05-31: full lit review; "agentic ≠ chat" declared table stakes.
@@ -41,6 +43,13 @@ earlier "best recipe / optimization" dead-end to measurement. Next concrete step
   Produced the annotated **study brief** (`docs/agentic-inference-brief.pdf` + `.html` source): a
   plain-language, jargon-explained edition with a 1–2 paragraph summary of every key paper (foundations,
   agents/harnesses, and the agentic-serving frontier) and per-paper relevance to the project.
+- 2026-06-14: 2nd external (Codex) review pass + a metric-design deep-dive. Added **two new pilot-design
+  issues** (#8 mixed-tenant cost attribution + attempt/retry structure; #9 experimental-hygiene controls)
+  and the "single cell = H1-feasibility only" framing. Metric deep-dive → headline should be
+  **cost-per-verified-*task*** (group-level: total cost over all attempts ÷ successful tasks; report in
+  GPU-seconds primarily, also $/Joules; cost-per-iteration as a diagnostic) — framed as goodput's
+  economic dual; pending co-author sign-off. Applied doc-consistency fixes (next-step gate, brief section
+  cross-refs + metric self-contradiction, GPU-idle wording, primer intro, reading-queue/budget wording).
 
 ## Honest assessment of the gap
 Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements

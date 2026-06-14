@@ -1,9 +1,8 @@
 # Agentic Inference & Infrastructure — Primer + Canonical Reading List
 
-*Compiled June 2026. Citations to arXiv IDs verified against live search are marked ✓. Foundational
-papers (well-known but ID/year reconstructed from memory) are marked ⚠ verify — confirm
-author/venue/year before any go into a bibliography, per the project's standing
-no-hallucinated-citations rule.*
+*Compiled June 2026; foundations re-verified 2026-06-13 (Part B — all ✓). Citations to arXiv IDs
+verified against live search are marked ✓; anything still ⚠ must be confirmed before it enters a
+bibliography, per the project's standing no-hallucinated-citations rule.*
 
 ---
 

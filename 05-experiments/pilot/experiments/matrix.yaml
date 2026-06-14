@@ -57,5 +57,5 @@ pilot:
 compute:
   target: "1xH100 (80GB) minimum; 2xH100/H200 preferred"
   rent: "Runpod / Lambda / Vast (~$2-4/hr); pilot likely <$300"
-  full_study_estimate_usd: "500-1500 (frontier-API + GPU rental)"
+  full_study_estimate_usd: "500-1500 (open-infra GPU rental only; no proprietary APIs, per scope)"
   funding: "TBD — Stanford credits / NVIDIA credits / personal (decide at sync)"

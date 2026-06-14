@@ -83,10 +83,12 @@ Primary readouts: available vs realized hit rate; cost-per-verified-iteration; t
 
 - **available reuse** — reusable input tokens under an *infinite* cache, computed offline by replay.
 - **realized hit rate** — prefix-cache hit tokens under the *bounded* online cache (engine counter).
-- **locality gap** — available − realized, in [0,1]. The core C1/B quantity.
+- **locality gap** — available − realized, in [0,1]. The core lead-contribution quantity.
 - **cost-per-verified-iteration** — total $ (or GPU-seconds) / iteration, *only for tasks that pass
   verification* (FAIL_TO_PASS or τ²-defined success). Null for failures.
-- **tool-gap** — wall-clock GPU idle between tool dispatch and return.
+- **tool-gap** — wall-clock time between tool dispatch and return (tool wall-time). NOT the same as
+  GPU-idle: under mixed tenancy the GPU serves other requests during it. GPU-idle is a separate
+  quantity, computed from a server-wide utilization timeline (see open issue 6).
 
 ---
 
@@ -118,7 +120,10 @@ honest basis for the author-order conversation — decide a *proposed* order bef
 
 ## Open design issues to resolve at the sync (from 2026-06-13 adversarial review)
 
-Settle these **before** spending GPU budget — they affect whether H1–H3 are even identifiable:
+Settle these **before** spending GPU budget — they affect whether H1–H3 are even identifiable. Note
+the single pilot cell (fixed horizon, no cache-budget axis) is an **H1-feasibility test only**: H2
+needs the horizon sweep, H3 needs a server-wide utilization timeline + offline simulation, and H4
+needs the independently-replayable artifact — give each its own protocol.
 
 1. **`locality_gap` definition + bounds.** The contract above says `available − realized` on a common
    denominator; the code (`trace_schema.py`) normalizes by reusable tokens and can return values
@@ -142,5 +147,16 @@ Settle these **before** spending GPU budget — they affect whether H1–H3 are 
 7. **Executor/aggregation don't match the design.** `run_pilot.main` loops only tenancy×policy (drops
    repeats + horizon → 4 cells, not 600); `aggregate` returns one global mean, not grouped/paired
    estimates with CIs. Fix the cell runner + grouped, token-weighted, paired stats.
+8. **Mixed-tenant cost attribution + attempt structure are undefined.** `total_cost_usd` is one number
+   per task with no rule for allocating shared GPU / CPU-tool / idle / background-chat cost, and no way
+   to represent multiple *failed attempts* before a success — which cost-per-verified-*task* requires.
+   Add an attempt/retry record + a server-accounting window; pre-register the attribution rule + a
+   sensitivity analysis.
+9. **No experimental-hygiene controls.** No cache warmup/flush, process isolation, teardown, or
+   cell-order randomization; cells run in fixed order and engine handles are never closed, so
+   carryover/order effects confound results. Add warmup/flush protocols, fresh isolated processes per
+   cell, randomized/blocked order, and lifecycle logging.
 
-*(Source: adversarial review, 2026-06-13. Items 1 & 4 were also flagged in the internal pass.)*
+*(Source: internal pass 2026-06-13 (items 1–7, with 1 & 4 also internal) + external Codex pass
+2026-06-14 (items 8–9 + the H1-feasibility framing). The headline-metric denominator
+[cost-per-verified-*task*, group-level] is a sync decision — see the metric-design discussion.)*
