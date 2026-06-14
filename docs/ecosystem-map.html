@@ -23,7 +23,7 @@
   #vp.grab{cursor:grabbing}
   #world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
   #edges{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
-  .blab{font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.08em;fill:#9a9a9a}
+  .blab{font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:.05em;fill:#9a9a9a}
   .elbl{font-family:Helvetica,Arial,sans-serif;font-size:11.5px;fill:#444;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
   .elbl.red{fill:#9b2226}.elbl.blue{fill:#2c5f8a}
   .np{position:absolute;transform:translate(-50%,-50%);z-index:2}
@@ -73,7 +73,7 @@
 (function(){
   var bands=[
     {k:'personas',x0:-25,x1:170,l:'PERSONAS · PAINS'},
-    {k:'clients',x0:180,x1:402,l:'CLIENTS · AGENTS · ORCHESTRATION'},
+    {k:'clients',x0:180,x1:402,l:'CLIENTS & ORCHESTRATION'},
     {k:'engines',x0:412,x1:702,l:'OPEN SERVING ENGINES'},
     {k:'vendor',x0:712,x1:962,l:'VENDOR · HARDWARE'},
     {k:'contributions',x0:968,x1:1182,l:'GRIT · CONTRIBUTIONS'}
@@ -93,10 +93,10 @@
     {id:'E2',cat:'engine',x:585,y:415,t:'SGLang',s:'RadixAttention reuse (ceiling)',det:'Open engine #2. Content-based prefix sharing — the best-case reuse ceiling to measure against.'},
     {id:'M',cat:'mech',x:585,y:560,t:'Agent-aware mechanisms',s:'KVFlow · Continuum · SAGA · ThunderAgent · Helium · Cortex · HexAGenT',det:'The crowded fix: everyone is building agent-aware caching/scheduling. That is why we measure rather than add one.'},
     {id:'V1',cat:'vendor',x:837,y:330,t:'NVIDIA Dynamo',s:'KV-aware router + agent hints',det:'The declared contract, shipping: nvext.agent_hints + cache_control TTL. Pre-empts “propose a hint spec”.'},
-    {id:'B3',cat:'meas',x:255,y:715,t:'SWE-bench V · τ²-bench · HAL',s:'our task benchmarks; HAL cost-aware',det:'Define “verified task”. SWE-bench Verified + τ²-bench are the two pilot arms.'},
-    {id:'C0',cat:'meas',x:470,y:715,t:'Cost-of-Pass (anchor)',s:'$ per correct solution',det:'The academic anchor: expected cost per correct answer. We open it to serving-internal cache behavior.'},
-    {id:'B1',cat:'meas',x:680,y:715,t:'AA-AgentPerf',s:'agents/MW under SLO; closed set',det:'Industry agent-efficiency benchmark — agents-per-megawatt, closed test set, no cost-per-task.'},
-    {id:'B2',cat:'meas',x:885,y:715,t:'InferenceX',s:'$/token, throughput; not agentic',det:'General serving benchmark; cost-per-token and throughput, not tied to agent task success.'},
+    {id:'B3',cat:'meas',x:255,y:732,t:'SWE-bench V · τ²-bench · HAL',s:'our task benchmarks; HAL cost-aware',det:'Define “verified task”. SWE-bench Verified + τ²-bench are the two pilot arms.'},
+    {id:'C0',cat:'meas',x:470,y:732,t:'Cost-of-Pass (anchor)',s:'$ per correct solution',det:'The academic anchor: expected cost per correct answer. We open it to serving-internal cache behavior.'},
+    {id:'B1',cat:'meas',x:680,y:732,t:'AA-AgentPerf',s:'agents/MW under SLO; closed set',det:'Industry agent-efficiency benchmark — agents-per-megawatt, closed test set, no cost-per-task.'},
+    {id:'B2',cat:'meas',x:885,y:732,t:'InferenceX',s:'$/token, throughput; not agentic',det:'General serving benchmark; cost-per-token and throughput, not tied to agent task success.'},
     {id:'Z1',cat:'oppty',x:1075,y:165,t:'Cost-of-Grit meter (C1)',s:'the locality-tax curve',det:'Lead contribution: cost per completed task vs horizon × cache policy × tenancy — the missing meter.'},
     {id:'Z2',cat:'oppty',x:1075,y:315,t:'Public mixed trace (C3)',s:'cost-labeled · open-infra · none exists',det:'Artifact contribution: a mixed chat+agent, cost-labeled, OTel-format serving trace + harness.'},
     {id:'P',cat:'project',x:1075,y:465,t:'GRIT — the open meter',s:'cost-per-verified-task · gap = available − realized',det:'Holds the model fixed; varies serving knobs on open infra; measures the value lost at the seam.',big:1},
@@ -139,9 +139,9 @@
     var t=document.createElementNS(NS,'text');t.setAttribute('x',bd.x0+12);t.setAttribute('y',66);t.setAttribute('class','blab');t.textContent=bd.l;svg.appendChild(t);
     bandEls[bd.k]={r:r,t:t};
   });
-  var mline=document.createElementNS(NS,'line');mline.setAttribute('x1',180);mline.setAttribute('y1',672);mline.setAttribute('x2',985);mline.setAttribute('y2',672);mline.setAttribute('stroke','#d6d6d6');mline.setAttribute('stroke-width','1');svg.appendChild(mline);
-  var mlab=document.createElementNS(NS,'text');mlab.setAttribute('x',180);mlab.setAttribute('y',666);mlab.setAttribute('class','blab');mlab.textContent='MEASUREMENT · BENCHMARKS';svg.appendChild(mlab);
-  bandEls['measurement']={r:mline,t:mlab};
+  var mrect=document.createElementNS(NS,'rect');mrect.setAttribute('x',165);mrect.setAttribute('y',670);mrect.setAttribute('width',825);mrect.setAttribute('height',104);mrect.setAttribute('fill','#f6f6f6');mrect.setAttribute('stroke','#e4e4e4');mrect.setAttribute('stroke-width','1');mrect.setAttribute('rx','3');svg.appendChild(mrect);
+  var mlab=document.createElementNS(NS,'text');mlab.setAttribute('x',177);mlab.setAttribute('y',690);mlab.setAttribute('class','blab');mlab.textContent='MEASUREMENT · BENCHMARKS';svg.appendChild(mlab);
+  bandEls['measurement']={r:mrect,t:mlab};
   var nodeEls={};
   N.forEach(function(n){
     var pos=document.createElement('div');pos.className='np';pos.style.left=n.x+'px';pos.style.top=n.y+'px';
