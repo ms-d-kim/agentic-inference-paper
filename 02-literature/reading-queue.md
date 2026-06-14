@@ -25,3 +25,7 @@ motivation only, never as research evidence):**
    the H1 framing (their high single-session hit rates = the "managed/available" pole).
 10. **AA-AgentPerf (Artificial Analysis)** (artificialanalysis.ai/articles/aa-agentperf) — methodology:
     agents/MW, SLO tiers, closed test set; bears on C1 distinctness + C3 (no public trace).
+11. **FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention** (2606.09079 ✓, Tencent et al.) — learned
+    prediction of query-critical KV chunks. Read for **H3** (a learned version of "phase-aware retention"
+    = prior art) + C2. Note: *intra-request* long-context, DeepSeek-V4-coupled, preliminary/suspended —
+    not the multi-tenant/agentic-loop regime, and it does NOT touch C1.

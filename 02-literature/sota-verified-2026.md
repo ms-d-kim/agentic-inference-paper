@@ -46,6 +46,15 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | AWO (meta-tools) | 2601.22037 | compile recurring behaviors into deterministic meta-tools | ✓ |
 | CONCUR | 2601.22705 | ICML 2026 — congestion-based concurrency control for agentic batch inference | ✓ |
 
+> **Adjacent (not agent-specific):** *FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention* (arXiv
+> 2606.09079 ✓, Tencent et al.) — a learned Neural Memory Indexer predicts *query-critical* KV chunks
+> and keeps only those (~13.5% footprint). This is **intra-request, ultra-long-context** KV
+> sparsification (importance prediction), NOT multi-tenant interleaving or tool-gap survival — so it
+> does **not** pre-empt C1, but it is prior art for **H3**'s "phase-aware retention" (a learned version
+> of the same idea) and reinforces the crowded mechanism space. Caveats: DeepSeek-V4-architecture-coupled
+> (not a drop-in vLLM/SGLang policy for the Qwen pilot); preliminary, project suspended — treat figures
+> as unsettled.
+
 ## Measurement / cost (the angle adjacent to ours)
 
 | Paper | arXiv | Note | Status |
