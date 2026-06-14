@@ -20,6 +20,9 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-14 — Discovery & gaps doc (harness needs, benchmark↔production, traces)
+Added `docs/discovery-and-gaps.md`: audits what GRIT addresses vs. not for (Q1) harness/developer needs + TTFT — locality gap *is* a TTFT/cost story; gaps are TTFT-not-reported, value-of-awareness underweighted, personas unvalidated, deployment-friction out-of-scope — and (Q2) the benchmark↔production gap — C3 answers it but GRIT inherits the agent-distribution gap; fix = drive the chat co-tenant with a *real* trace (BurstGPT/Azure) + replay a real agent corpus. Includes a web-checked (2026-06-14) public-trace landscape table and a who-to-talk-to list. Six follow-on actions, incl. adding TTFT outputs and BurstGPT (`2401.17644`) + Azure traces to the ledger.
+
 ### 2026-06-14 — Figure-1 rendering fixes
 Fixed overlapping/overextending edge labels in `docs/ecosystem-map.html` (long single-line SVG labels were crossing node boxes): shortened to terse terms (interleaves · the seam · measures the gap · anchors · pre-empted) and hand-placed each into an open gutter; detail now lives in the caption. Centered the GRIT box in its column (x 1068→1075) and gave nodes a uniform `min-height` so columns align. Verified via headless render.
 
