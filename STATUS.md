@@ -36,6 +36,11 @@ earlier "best recipe / optimization" dead-end to measurement. Next concrete step
   `05-experiments/pilot/README.md` (locality_gap def + [0,1] bound, trace fields for replay/eviction,
   tenancy↔load confound, bounded-KV axis, cost-per-verified-iteration survivor bias, tool-gap≠GPU-idle,
   executor/aggregation shape). These gate spending GPU budget.
+- 2026-06-14: added FlashMemory-DeepSeek-V4 (2606.09079, learned KV-importance prediction) to the
+  ledger — prior art for the phase-structure hypothesis (H3); does not pre-empt the lead measurement.
+  Produced the annotated **study brief** (`docs/agentic-inference-brief.pdf` + `.html` source): a
+  plain-language, jargon-explained edition with a 1–2 paragraph summary of every key paper (foundations,
+  agents/harnesses, and the agentic-serving frontier) and per-paper relevance to the project.
 
 ## Honest assessment of the gap
 Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements
@@ -62,6 +67,8 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 - `docs/agentic-inference-primer.md` — expert primer + canonical reading list.
 - `docs/inference-systems-reading-map.md` — canonical inference-systems reading map (verified arXiv IDs).
 - `docs/threats-to-validity.md` — reviewer-defense checklist + methods/artifact commitments.
+- `docs/agentic-inference-brief.pdf` / `.html` — annotated study brief (every key paper summarized in
+  plain language; the readable companion to the primer + reading map).
 - `02-literature/` — `sota-verified-2026.md` (citation source of truth), `reading-queue.md`,
   and PLACEHOLDER stubs for the prior-session survey / related-work / lit-review (paste real text in).
 - `04-ideas/` — `candidates.md` (C1–C6), `graveyard.md` (killed ideas; check before "new" ideas).

@@ -7,6 +7,10 @@ venue records on 2026-06-13 (✓). Companion to [`agentic-inference-primer.md`](
 (mental model + agentic frontier) and [`../02-literature/sota-verified-2026.md`](../02-literature/sota-verified-2026.md)
 (the agentic-serving competitive set). Use this to fill gaps; the frontier builds directly on these.*
 
+> For **plain-language 1–2 paragraph summaries** of these papers (and the agentic frontier), with every
+> term explained, see the annotated study brief: [`agentic-inference-brief.pdf`](agentic-inference-brief.pdf).
+> This map is the quick-reference index; the brief is the prose companion.
+
 **The one organizing idea:** inference has two regimes — **prefill** is compute-bound, **decode** is
 memory-bandwidth-bound — and almost everything here is either (a) moving work across that
 compute/bandwidth line, or (b) managing the **KV cache** (its size, reuse, eviction, precision, or
