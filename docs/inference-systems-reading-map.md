@@ -94,7 +94,8 @@ placement). Read each paper by asking which of those two it does.
 2. **The memory wall.** In decode, loading weights + KV from HBM dominates wall-clock, not FLOPs.
    That's why a forward over K tokens costs ~the same as over 1 — the entire basis of speculative decoding.
 3. **Goodput, not throughput.** The SLO-meeting metric. Disaggregation (DistServe/Splitwise/Mooncake)
-   is fundamentally a goodput play — and so is our cost-per-verified-iteration.
+   is fundamentally a goodput play. (Our cost-per-verified-iteration is a distinct *economic-efficiency*
+   metric — complementary to goodput, not the same thing.)
 4. **Prefill/decode interference.** Colocating compute-bound prefill with bandwidth-bound decode
    causes mutual slowdown; the whole disaggregation line exists to fix it. Agentic loops re-trigger
    prefill constantly, so this is **central to our workload.**

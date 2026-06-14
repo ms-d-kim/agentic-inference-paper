@@ -45,7 +45,7 @@ no-hallucinated-citations rule.*
 
 ## Part B — Canonical foundations (read these first)
 
-**Serving systems** *(all ✓ verified 2026-06-13 per the working brief — 10/10 against recall)*
+**Serving systems** *(all ✓ verified 2026-06-13 per the working brief)*
 - **PagedAttention / vLLM** — Kwon et al., SOSP 2023, arXiv 2309.06180 ✓. The paging model for KV cache; the de-facto open serving baseline.
 - **Orca** — Yu et al., OSDI 2022 ✓ (no arXiv). Continuous (iteration-level) batching.
 - **SGLang / RadixAttention** — Zheng et al., arXiv 2312.07104 ✓. Prefix-sharing via a radix tree; the most relevant cache story to your hypotheses.

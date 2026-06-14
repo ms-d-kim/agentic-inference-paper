@@ -10,8 +10,9 @@ paper, public benchmarks + open infra only. Not a system, not a recipe, not a ke
 **Lead contribution (C1):** a rigorous, open-infra quantification of the *realized-vs-available
 cache-locality gap* under realistic agentic + mixed traffic, expressed as
 **cost-per-verified-iteration** curves — plus, as a cross-cutting artifact (C3), a released
-**mixed chat×agent, cost-labeled, OTel-format trace + harness**, since no public *agentic* trace
-exists.
+**mixed chat×agent, cost-labeled, OTel-format trace + harness**, since no public *mixed chat×agent,
+cost-labeled, open-infra* serving trace exists (as of a dated search; the broader "first public
+agentic trace" headline is already eroded — see `04-ideas/graveyard.md`).
 
 > Framing discipline (from the SOTA pass): the *mechanism* space (eviction/TTL/sharing/scheduling)
 > is now crowded — Continuum/CacheTTL, KVFlow, KVCOMM, Sutradhara, Helium, SparseX, TokenDance.
@@ -26,7 +27,8 @@ exists.
 **H1 — The locality gap is real on open infra, and interleaving is a distinct driver.**
 When chat and agent traffic share one vLLM/SGLang instance under a bounded KV budget, the
 *realized* prefix-cache hit rate for agent requests falls well below the *available* reuse
-measured in isolation (the 84–99%-class numbers in 2605.26297), and a measurable share of the
+measured in isolation (the high-reuse regime in 2605.26297 — record the exact figure + denominator
+in `02-literature/sota-verified-2026.md` before quoting a precise range), and a measurable share of the
 drop is attributable to **eviction pressure from interleaving**, separable from intra-agent
 context churn.
 - *Why non-obvious:* 2605.26297 reports high reuse; Sutradhara reports collapse — but Sutradhara
@@ -111,3 +113,34 @@ honest basis for the author-order conversation — decide a *proposed* order bef
 3. **Compute funding:** Stanford credits / NVIDIA credits / personal?
 4. **Author order:** given the instrumentation weighting, what ordering are we proposing?
 5. **What I have NOT pre-built:** the engine instrumentation, on purpose — it's a co-design item.
+
+---
+
+## Open design issues to resolve at the sync (from 2026-06-13 adversarial review)
+
+Settle these **before** spending GPU budget — they affect whether H1–H3 are even identifiable:
+
+1. **`locality_gap` definition + bounds.** The contract above says `available − realized` on a common
+   denominator; the code (`trace_schema.py`) normalizes by reusable tokens and can return values
+   outside [0,1] (it returns −0.4 for realized>reusable). Pick ONE definition (recommend: both rates
+   over *total eligible input tokens*), make code + docstring match, and validate `0 ≤ realized ≤ available ≤ 1`.
+2. **Trace schema can't yet compute available reuse or attribute eviction.** It records token *counts*
+   but not prompt token-IDs / block hashes, global request ordering + timestamps, tokenizer revision,
+   cache keys, eviction victims, or tenant provenance — so the infinite-cache replay (and "did chat
+   evict agent blocks?") is not computable. Add these (Vinita owns the serving-internal fields). Same
+   gap makes the "OTel-format" label aspirational: add real trace/span/parent IDs + timestamps or drop the claim.
+3. **Tenancy vs offered-load confound.** `isolated` vs `mixed_0.50` changes *composition* AND total
+   load/concurrency at once. Hold the agent trajectories fixed and add chat as a *rate-matched*
+   background (control total token-arrival rate + concurrency) so the gap is attributable to interleaving.
+4. **Bounded-KV budget is unset** (`bounded_cache_blocks=-1`; no matrix axis). Add a positive
+   block/byte budget as a first-class axis; ideally sweep ≥2 pressure regimes.
+5. **Cost-per-verified-iteration has horizon-dependent survivor bias** — nulling cost on failures drops
+   the expensive long-horizon failures, exactly where "Cost of Grit" lives. Report cost-per-verified-*task*
+   including failed-attempt cost + a success/censoring curve, over all attempts (not just successes).
+6. **"Tool-gap" ≠ GPU-idle.** `tool_gap_ms` is tool wall-time; under mixed tenancy the GPU serves other
+   requests during it. H3 needs an engine-wide utilization timeline to compute idle-by-cause.
+7. **Executor/aggregation don't match the design.** `run_pilot.main` loops only tenancy×policy (drops
+   repeats + horizon → 4 cells, not 600); `aggregate` returns one global mean, not grouped/paired
+   estimates with CIs. Fix the cell runner + grouped, token-weighted, paired stats.
+
+*(Source: adversarial review, 2026-06-13. Items 1 & 4 were also flagged in the internal pass.)*

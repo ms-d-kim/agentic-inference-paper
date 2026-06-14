@@ -6,6 +6,11 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 
 > Standing rule for this project: prior sessions hallucinated arXiv references. Nothing goes
 > into a bibliography or a claim without a ✓ here.
+>
+> Scope: this ledger is authoritative for the *agentic-serving* competitive set + anything entering a
+> claim. The canonical inference-systems foundations are verified in the companion
+> [`../docs/inference-systems-reading-map.md`](../docs/inference-systems-reading-map.md) — treat the
+> two together as the source of truth.
 
 ## Closest prior work (the competitive frontier)
 
@@ -50,7 +55,33 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | Latency-Reliability-Cost tradeoffs in agentic workflows | 2605.23929 | analytical tradeoff model | ✓ |
 | SWE-EVO (long-horizon SE benchmark) | 2512.18470 | multi-PR tasks, "Fix Rate" partial-progress metric | ✓ |
 
-## Foundations (verified 2026-06-13 per the working brief — 10/10 against recall)
+## Industry / vendor benchmarks & systems (verified real online 2026-06-13)
+
+*Real and source-checked — but vendor blogs / a commercial benchmark, NOT peer-reviewed. Use for
+landscape & motivation; do NOT quote their numbers as research evidence (no-vendor-headline rule).*
+
+| Source | Where | What it is / relevance | Status |
+|---|---|---|---|
+| AA-AgentPerf (Artificial Analysis) | artificialanalysis.ai/articles/aa-agentperf | "First agentic-AI hardware benchmark": concurrent **agents per megawatt** (lead metric) under model-specific SLO tiers (P25 output speed, P95 TTFT) on **real coding-agent trajectories** (≤200 turns; input ~27K mean, ≤131K), multi-vendor HW. **Test set CLOSED/held-out.** Cost-per-success / token-economics = *future work.* | ✓ real |
+| SemiAnalysis InferenceMAX / InferenceX | inferencex.semianalysis.com | Open, continuous inference benchmark — cost-per-token / throughput / TCO. The "InferenceX" referenced as prior work. **Not agentic** (general serving). | ✓ real |
+| NVIDIA Dynamo — agentic inference | developer.nvidia.com/blog/full-stack-optimizations-for-agentic-inference-with-nvidia-dynamo | **KV-aware router** (global KV-block index, overlap-score placement) + **agentic hints** `nvext.agent_hints` = {priority, osl, speculative_prefill} + `cache_control {ephemeral, ttl}`. Reports 85–97% Claude-Code cache hit (**realized, under their routing — not infinite-cache "available"**), 11.7× read/write. **No multi-tenant interleaving / realized-vs-available analysis; no released traces.** | ✓ real |
+| NVIDIA NemoClaw / OpenShell | nvidia.com/nemoclaw | Autonomous-agent blueprints (Nemotron) + sandboxed runtime (OpenShell/OpenClaw). Context for the "stack extends upward" framing; not serving characterization. | ✓ real |
+
+### Relevance to our contributions (important)
+- **C4 (runtime↔engine hint interface) is largely PRE-EMPTED.** Dynamo already ships the hint spec C4
+  would propose (`nvext.agent_hints`: priority / osl / speculative_prefill / cache_control TTL).
+  Re-scope C4 to *measuring the marginal value of these existing hints on open infra*, or graveyard it.
+- **H1 (interleaving as a distinct driver) is SHARPENED and still open.** Dynamo's 85–97% are
+  *realized* hit rates measured under its OWN KV-aware routing in single-session/managed settings —
+  NOT infinite-cache *available* reuse, and with no multi-tenant interleaving / bounded-cache analysis.
+  Use them as motivation only (even good production routing leaves the interleaving question open);
+  do NOT equate them with our "available" pole or compare them numerically with our locality metric.
+- **C1 stays distinct.** AA-AgentPerf = agents/MW under SLO, not **cost-per-verified-iteration** tied
+  to success (they list token-economics as future work).
+- **C3 / H4 (no public agentic/mixed trace) STRENGTHENED.** AA-AgentPerf's test set is closed; Dynamo
+  releases no traces. The public-trace gap stays open.
+
+## Foundations (verified 2026-06-13 per the working brief)
 
 PagedAttention/vLLM 2309.06180 ✓ · Orca (OSDI'22, no arXiv) ✓ · SGLang/RadixAttention 2312.07104 ✓ ·
 DistServe 2401.09670 ✓ · Sarathi-Serve 2403.02310 ✓ · FlashAttention 2205.14135 ✓ · ReAct 2210.03629 ✓ ·
@@ -66,7 +97,7 @@ These appear in `04-ideas/candidates.md` and `02-literature/reading-queue.md` bu
 confirmed this session. Some may be internal codenames, renamed, or hallucinated:
 - **SideQuest (2602.22603)** — not verified.
 - **Agent Memory (2606.06448)** — ✗ likely wrong ID. A real paper "Agent Memory Below the Prompt"
-  exists at **2603.04428**; confirm which is meant.
+  may exist at **2603.04428** — ⚠ NOT verified this session; confirm before use.
 - **AutoLab** (and its "+0.43" harness-ablation figure) — not verified; do not quote the figure.
 - **Inside the Scaffold**, **GoodServe**, **Self-Harness**, **lmcache-agent-trace**,
   **ThunderAgent**, **Agentix@NSDI** — not verified this session.

@@ -2,7 +2,8 @@
 
 A measurement-and-characterization study of how agentic inference workloads differ structurally from
 chat, and what that means for serving-system design. Public benchmarks (SWE-bench Verified, τ²-bench)
-+ open infra (vLLM/SGLang) only. Target: **MLSys 2027 Industry Track (~Oct 2026)**.
++ open infra (vLLM/SGLang) only. Target: **MLSys 2027 Industry Track (~Oct 2026)** — provisional,
+pending the 2027 CFP (see [`07-venues/venues.md`](07-venues/venues.md)).
 
 See [`STATUS.md`](STATUS.md) for current state.
 

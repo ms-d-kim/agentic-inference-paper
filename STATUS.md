@@ -8,8 +8,9 @@ Measurement-and-characterization paper for **MLSys 2027 Industry Track (~Oct 202
 benchmarks (SWE-bench Verified, τ²-bench) + open infra (vLLM/SGLang) only. The lead contribution is
 **C1 — the cost-per-verified-iteration / "Cost of Grit" curve**, with the realized-vs-available
 **cache-locality gap** folded inside it, plus **C3 — a released mixed chat×agent, cost-labeled,
-OTel-format trace + harness** as the cross-cutting artifact. Literature review is done and
-re-verified live (`02-literature/sota-verified-2026.md`). Framing has correctly converged from an
+OTel-format trace + harness** as the cross-cutting artifact. The citation ledger / SOTA pass is done
+and re-verified live (`02-literature/sota-verified-2026.md`); prose synthesis (survey, lit-review,
+related-work) is still pending — those files are placeholders. Framing has correctly converged from an
 earlier "best recipe / optimization" dead-end to measurement. Next concrete step: run the pilot cell.
 
 ## What changed recently
@@ -23,6 +24,18 @@ earlier "best recipe / optimization" dead-end to measurement. Next concrete step
   (`docs/threats-to-validity.md`); resolved CONCUR (2601.22705, ICML 2026) UNVERIFIED → ✓; promoted
   the foundations to ✓ (10/10) and added the Sarathi-Serve ID (2403.02310); corrected the MLSys 2027
   venue detail (the earlier "Apr 11–15 / Crete" claim was wrong — MLSys runs in the US).
+- 2026-06-13: verified the AA-AgentPerf / InferenceMAX / NVIDIA Dynamo agentic-inference landscape
+  online — all real. Net: **C4 (hint interface) largely pre-empted** by Dynamo `nvext.agent_hints`;
+  **H1 (interleaving driver) sharpened and still open** (Dynamo shows 85–97% single-session hit rates
+  but no multi-tenant analysis); **C1 + C3 differentiation intact** (AA-AgentPerf is agents/MW under
+  SLO with a closed test set, not cost-per-verified-iteration). Logged in `sota-verified-2026.md`.
+- 2026-06-13: adversarial review pass (internal + external Codex). Applied doc-consistency fixes
+  (corrected a vendor-number framing slip — Dynamo's 85–97% are *realized* not "available"; softened the
+  84–99% claim pending a ledger figure; "lit review done" → ledger-done/prose-pending; venue marked
+  provisional; misc status/wording). Captured 7 design BLOCKERs for the Vinita sync in
+  `05-experiments/pilot/README.md` (locality_gap def + [0,1] bound, trace fields for replay/eviction,
+  tenancy↔load confound, bounded-KV axis, cost-per-verified-iteration survivor bias, tool-gap≠GPU-idle,
+  executor/aggregation shape). These gate spending GPU budget.
 
 ## Honest assessment of the gap
 Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements

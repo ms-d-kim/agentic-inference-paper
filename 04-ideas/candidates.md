@@ -12,13 +12,21 @@ kill criterion; killed ideas move to `graveyard.md`. Check the graveyard before 
 - **Collisions:** adversarially checked 06-10. Distinguish from: Don't Break the Cache (2601.06007 ✓,
   provider-API level only), the Efficiency-Frontier-style analytical models (e.g. 2605.23929 ✓),
   More with Less (2510.16786 ✓, capability side). "SideQuest" and "Agent Memory" collisions are
-  ⚠ UNVERIFIED — see `02-literature/sota-verified-2026.md`.
+  ⚠ UNVERIFIED — see `02-literature/sota-verified-2026.md`. AA-AgentPerf (Artificial Analysis,
+  verified 2026-06-13) measures agents/MW under SLO tiers, **not** cost-per-verified-iteration tied to
+  task success (token-economics is their future work) — C1 stays distinct.
+- **Scope note (2026-06-13):** the claim lists horizon × cache policy × compaction × tenancy × model
+  size, but the V1 pilot matrix varies only horizon × cache policy × tenancy on one model family.
+  *Compaction policy* and *model size* are V2 expansion axes — not yet in `matrix.yaml`; narrow the
+  written claim to V1 or label them explicitly as staged.
 - **Status:** pilot pending. See `05-experiments/pilot/`.
 
 ## C2 — Cache-aware context-edit policy formalization
 - **Claim:** treat context edits as decisions with cache-write/recompute costs + quality risk;
   policy search; quality×cost frontier across agents and cache regimes (incl. CacheBlend-class).
 - **Status:** watching; natural sequel or pivot of C1. Home venue: COLM 2027.
+- **Note (2026-06-13):** TTL-style retention across tool gaps now ships in production (Dynamo
+  `cache_control` ephemeral TTL; cf. Continuum/CacheTTL) — reinforces measurement-not-mechanism.
 
 ## C3 — Mixed-tenancy, cost-labeled public trace + harness
 - **Claim:** release the chat×agent interleaved serving trace with arrival dynamics, cache events,
@@ -31,7 +39,11 @@ kill criterion; killed ideas move to `graveyard.md`. Check the graveyard before 
 ## C4 — Runtime↔engine hint interface (value-of-hints study → spec)
 - **Claim:** measure marginal value of each hint type (resume-time, fan-out, durable-prefix markers)
   vs inference-only baselines, then propose the minimal spec.
-- **Status:** parked behind C1 (C1 produces the value measurements).
+- **Collision (2026-06-13, verified online):** NVIDIA Dynamo already SHIPS this interface —
+  `nvext.agent_hints` = {priority, osl, speculative_prefill} + `cache_control {ephemeral, ttl}`
+  (see `02-literature/sota-verified-2026.md`). The "propose the minimal spec" framing is pre-empted.
+- **Status:** ⚠ largely pre-empted. Re-scope to *measuring the marginal value of the existing Dynamo
+  hints on open infra* (a value study, not a spec proposal), or graveyard. Decide at the sync.
 
 ## C5 — Iteration-economics metering (product-shaped)
 - **Claim:** cost-per-verified-iteration and realized-vs-available locality as first-class serving
