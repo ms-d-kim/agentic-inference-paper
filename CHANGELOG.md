@@ -20,6 +20,9 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-14 — Added product/ecosystem map (companion lens)
+Created `docs/ecosystem-and-product-map.md` — the product/business view (ecosystem relational graph + mindmap, personas, user journeys, pain→opportunity map). Explicitly a *companion* to the measurement paper, not part of its scientific claims; supports the product / internship customer-discovery lens. Rollback: delete the file + its README layout pointer.
+
 ### 2026-06-14 — Judge re-review (pass 2) + contradiction fixes
 A second judge panel (re-convened fresh — the subagent-continue channel was unavailable) re-read the *corrected* repo, verified the pass-1 fixes landed (Agent Memory/ThunderAgent now ✓, success-invariance corrected, CHANGELOG accurate), and caught what pass 1 + my fixes missed:
 - **Fixed 3 internal contradictions:** issue-count (README still said "nine" in 2 line-wrapped spots — numeral now dropped to avoid churn); trajectory count (pilot README still said 600/<$300 single-arm — now 1,200/two-arm); **Tambe** (ledger called him "our faculty contact" but `stakeholders.md` says he passed on the project — reconciled: he is now *adjacent prior art* via Agent Memory 2606.06448; flagged in `stakeholders.md`).

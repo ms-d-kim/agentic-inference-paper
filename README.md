@@ -214,6 +214,7 @@ docs/
   inference-systems-reading-map.md       Canonical inference-systems papers (verified arXiv IDs)
   threats-to-validity.md                 Reviewer-defense checklist + methods/artifact commitments
   metric-design.md                       The "Cost of Grit" metric decision (cost-per-verified-task)
+  ecosystem-and-product-map.md           Product/business lens — ecosystem, personas, journeys, opportunities
 02-literature/
   sota-verified-2026.md                  Citation ledger — source of truth (✓ / ⚠)
   reading-queue.md                       Prioritized reading
