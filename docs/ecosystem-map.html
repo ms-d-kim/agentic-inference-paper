@@ -27,7 +27,7 @@
   .elbl{font-family:Helvetica,Arial,sans-serif;font-size:11.5px;fill:#444;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
   .elbl.red{fill:#9b2226}.elbl.blue{fill:#2c5f8a}
   .np{position:absolute;transform:translate(-50%,-50%);z-index:2}
-  .node{width:178px;background:#fff;border:1px solid #111;border-radius:2px;padding:6px 9px 7px;cursor:pointer;transition:transform .15s ease,background .12s,opacity .18s}
+  .node{width:178px;min-height:52px;display:flex;flex-direction:column;justify-content:center;background:#fff;border:1px solid #111;border-radius:2px;padding:6px 9px 7px;cursor:pointer;transition:transform .15s ease,background .12s,opacity .18s}
   .node:hover{transform:scale(1.025);background:#f7f7f7}
   .node .ttl{font:500 13px/1.18 Helvetica,Arial,sans-serif;color:#111;margin-bottom:2px}
   .node .sub{font:400 11px/1.3 Helvetica,Arial,sans-serif;color:#5a5a5a}
@@ -99,22 +99,22 @@
     {id:'B2',cat:'meas',x:885,y:715,t:'InferenceX',s:'$/token, throughput; not agentic',det:'General serving benchmark; cost-per-token and throughput, not tied to agent task success.'},
     {id:'Z1',cat:'oppty',x:1075,y:165,t:'Cost-of-Grit meter (C1)',s:'the locality-tax curve',det:'Lead contribution: cost per completed task vs horizon × cache policy × tenancy — the missing meter.'},
     {id:'Z2',cat:'oppty',x:1075,y:315,t:'Public mixed trace (C3)',s:'cost-labeled · open-infra · none exists',det:'Artifact contribution: a mixed chat+agent, cost-labeled, OTel-format serving trace + harness.'},
-    {id:'P',cat:'project',x:1068,y:465,t:'GRIT — the open meter',s:'cost-per-verified-task · gap = available − realized',det:'Holds the model fixed; varies serving knobs on open infra; measures the value lost at the seam.',big:1},
+    {id:'P',cat:'project',x:1075,y:465,t:'GRIT — the open meter',s:'cost-per-verified-task · gap = available − realized',det:'Holds the model fixed; varies serving knobs on open infra; measures the value lost at the seam.',big:1},
     {id:'Z3',cat:'oppty',x:1075,y:610,t:'Value-of-hints (C4)',s:'declared vs inferred — measured',det:'Re-scoped contribution: measure the marginal value of existing hints (Dynamo pre-empts proposing a new spec).'}
   ];
   var E=[
-    ['CT','E1','interleave','interleaves → evicts agent KV'],['CT','E2','interleave'],
+    ['CT','E1','interleave','interleaves',455,176],['CT','E2','interleave'],
     ['A1','O','flow'],['A2','O','flow'],
-    ['O','E1','seam','workflow-agnostic seam'],['O','E2','seam'],
+    ['O','E1','seam','the seam',452,452],['O','E2','seam'],
     ['KV','E1','flow'],['KV','E2','flow'],
     ['M','E1','flow'],['M','E2','flow'],
     ['E1','V1','flow'],['E2','V1','flow'],
     ['U1','E1','pain'],['U2','A1','pain'],['U3','B3','pain'],['U4','V1','pain'],
     ['B1','V1','meas'],['B2','E1','meas'],['B3','A1','meas'],
-    ['C0','P','anchor','anchored on Cost-of-Pass'],
-    ['P','E1','project','measures available − realized'],['P','V1','project'],
+    ['C0','P','anchor','anchors',805,600],
+    ['P','E1','project','measures the gap',706,392],['P','V1','project'],
     ['P','Z1','deliver'],['P','Z2','deliver'],['P','Z3','deliver'],
-    ['Z3','V1','preempt','pre-empted by Dynamo']
+    ['Z3','V1','preempt','pre-empted',905,432]
   ];
   var ek={
     flow:{c:'#555',w:1.3,d:'',m:'ad',l:'request / data flow'},
@@ -165,7 +165,7 @@
     if(s.d)ln.setAttribute('stroke-dasharray',s.d);
     if(s.m)ln.setAttribute('marker-end','url(#'+s.m+')');
     ln._s=e[0];ln._t=e[1];ln._w=s.w;svg.appendChild(ln);edgeEls.push(ln);
-    if(e[3]){var mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2,t=document.createElementNS(NS,'text');t.setAttribute('x',mx);t.setAttribute('y',my-3);t.setAttribute('text-anchor','middle');t.setAttribute('class','elbl'+(s.cl?' '+s.cl:''));t.textContent=e[3];svg.appendChild(t);t._s=e[0];t._t=e[1];edgeEls.push(t);}
+    if(e[3]){var mx=(e[4]!=null?e[4]:(p1[0]+p2[0])/2),my=(e[5]!=null?e[5]:(p1[1]+p2[1])/2-3),t=document.createElementNS(NS,'text');t.setAttribute('x',mx);t.setAttribute('y',my);t.setAttribute('text-anchor','middle');t.setAttribute('class','elbl'+(s.cl?' '+s.cl:''));t.textContent=e[3];svg.appendChild(t);t._s=e[0];t._t=e[1];edgeEls.push(t);}
   });
   var st={x:0,y:0,s:.62},raf=0;
   function apply(){world.style.transform='translate('+st.x+'px,'+st.y+'px) scale('+st.s+')';if(sel)placeTipFor(byId[sel]);}

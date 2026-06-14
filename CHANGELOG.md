@@ -20,6 +20,9 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-14 — Figure-1 rendering fixes
+Fixed overlapping/overextending edge labels in `docs/ecosystem-map.html` (long single-line SVG labels were crossing node boxes): shortened to terse terms (interleaves · the seam · measures the gap · anchors · pre-empted) and hand-placed each into an open gutter; detail now lives in the caption. Centered the GRIT box in its column (x 1068→1075) and gave nodes a uniform `min-height` so columns align. Verified via headless render.
+
 ### 2026-06-14 — Project named GRIT; repo renamed
 Named the project **GRIT** (*GPU Reuse under Interleaved Traffic*) — ties the metric brand ("Cost of Grit") to the experiment. Threaded through the README title/intro, `docs/overview.md`, and the Figure-1 caption / node / band / legend. Renamed the GitHub repo `agentic-inference-paper` → `grit` (GitHub keeps a redirect from the old URL; local remote auto-updated) and refreshed the repo description. Rollback: `gh repo rename agentic-inference-paper` + `git revert` this commit.
 
