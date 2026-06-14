@@ -87,8 +87,9 @@ are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + 
 ## Framing-precision corrections (carry into the writeup)
 - Sutradhara is **synthetic-at-production-scale**, not real production; it attributes cache collapse
   to intra-request churn + eviction, not multi-tenancy. H1 must *prove* the interleaving driver.
-- "No public trace exists" → **no public *agentic/mixed* serving trace** (ServeGen released a
-  generator on real but non-agentic data).
+- "No public trace exists" → **no public *mixed chat+agent, cost-labeled, open-infra* serving trace**
+  (ServeGen released a generator on non-agentic data; vLLM×Mooncake released an *agent-only,
+  un-cost-labeled* corpus). The bare "agentic" phrasing is now falsified — always use the four-part form.
 
 ## Repo map
 - `STATUS.md` — this file.

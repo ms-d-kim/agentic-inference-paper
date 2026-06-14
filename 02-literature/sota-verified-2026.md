@@ -65,7 +65,8 @@ agent loop, the coming tool pause, and cross-request prefix sharing. The 2026 fr
 break this seam, and it splits into two families:
 - **Declared** (the agent *tells* the engine its structure/intent): Dynamo `nvext.agent_hints`,
   KVFlow (Agent Step Graph), Helium (query plan), HexAGenT (online-revealed DAG), Cortex (compiled
-  call graph + SLO slack), Autellix (agents-as-programs), Sutradhara (explicit orchestrator-engine co-design).
+  call graph + SLO slack), Autellix + ThunderAgent (2602.13692, agents/workflows-as-programs), Sutradhara
+  (explicit orchestrator-engine co-design).
 - **Inferred** (the engine *guesses*, no signal): Continuum/CacheTTL (TTL heuristic — the agent will be
   back), GoodServe (infers task type from the prompt at the router).
 - **Cross-request/agent KV awareness** (a sub-form): KVCOMM, SparseX, TokenDance share/dedupe KV across
@@ -173,11 +174,18 @@ verified in [`../docs/inference-systems-reading-map.md`](../docs/inference-syste
 These appear in `04-ideas/candidates.md` and `02-literature/reading-queue.md` but were NOT
 confirmed this session. Some may be internal codenames, renamed, or hallucinated:
 - **SideQuest (2602.22603)** — not verified.
-- **Agent Memory (2606.06448)** — ✗ likely wrong ID. A real paper "Agent Memory Below the Prompt"
-  may exist at **2603.04428** — ⚠ NOT verified this session; confirm before use.
+- **Agent Memory (2606.06448)** — ✓ RESOLVED 2026-06-14 (judge panel caught a false ✗): **REAL** —
+  *"Agent Memory: Characterization and System Implications of Stateful Long-Horizon Workloads"* (Omri,
+  Gan, …, **Thierry Tambe**; Stanford et al., Jun 2026). First systems characterization of agent memory
+  (4-axis taxonomy) — a **close characterization competitor** (and Tambe is our faculty contact, see
+  `06-collab/stakeholders.md`). The earlier guessed 2603.04428 was wrong; READ + differentiate (memory
+  systems vs. our KV-locality / cost-per-task angle).
 - **AutoLab** (and its "+0.43" harness-ablation figure) — not verified; do not quote the figure.
-- **Inside the Scaffold**, **Self-Harness**, **lmcache-agent-trace**, **ThunderAgent**,
-  **Agentix@NSDI** — not verified this session.
+- **Inside the Scaffold**, **Self-Harness**, **lmcache-agent-trace**, **Agentix@NSDI** — not verified.
+- **ThunderAgent (2602.13692)** — ✓ RESOLVED 2026-06-14 (judge panel caught a false "maybe-hallucinated"):
+  **REAL** — *"ThunderAgent: A Simple, Fast and Program-Aware Agentic Inference System"* (abstracts agentic
+  workflows as LLM Programs; program-aware scheduler maximizing KV-cache hit; 1.5–3.6× vLLM throughput).
+  A **declared-contract** competitor → belongs in the "declared vs inferred" seam map above.
 - **GoodServe** — ✓ RESOLVED 2026-06-14: real (arXiv 2605.16867, SJTU/CUHK-SZ); agentic goodput over
   heterogeneous resources; promoted to the measurement/cost table above.
 - **CONCUR** — ✓ RESOLVED 2026-06-13: real (arXiv 2601.22705, ICML 2026); promoted to the mechanisms

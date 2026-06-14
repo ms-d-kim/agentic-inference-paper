@@ -1,0 +1,53 @@
+# CHANGELOG / Decision & Rollback Log
+
+*Human-readable history of substantive changes, keyed to git commits, so any change can be rolled back.
+Newest first. Git is the source of truth; this file maps commits → what/why → how to undo. Append a row
+here whenever you make a substantive change.*
+
+## How to roll back
+- **Inspect a commit:** `git show <hash>`
+- **Undo one commit, keep history:** `git revert <hash>`  (safe; makes a new inverse commit)
+- **Restore one file to a past state:** `git checkout <hash> -- <path>`
+- **Hard reset to a known-good commit (destructive):** `git reset --hard <hash>` then `git push --force-with-lease`
+- **Compare:** `git diff <oldhash> <newhash> -- <path>`
+
+## Key reversible decisions (what reverting each era undoes)
+- **Metric = cost per verified _task_** (not per-iteration): `docs/metric-design.md` (commit `76be0cb`, extended in the landscape-refresh + judge-panel commits). Revert those to return to the per-iteration framing.
+- **Pilot is two-armed** (τ²-bench **+ SWE-bench Verified**): `matrix.yaml` in the landscape-refresh commit (`a58f1a3`). Revert that hunk to return to the τ²-only 600-trajectory pilot.
+- **Seam framed as a regime-dependent cost lever** (not a fundamental gap): landscape-refresh commit. 
+- **C3 novelty narrowed** to *mixed + cost-labeled + open-infra* (after vLLM×Mooncake): graveyard/candidates/README in `a58f1a3`.
+- **README tagline / problem / contributions / methodology rewrite + Mermaid flowchart:** `dab2c27`, `707a7bf`.
+
+## Log
+
+### 2026-06-14 — Adversarial judge-panel review (this entry; corrections committed alongside)
+Four parallel "judge" subagents (methodology · literature · contributions/novelty · dataset/artifact) reviewed the repo top-to-bottom; convergent verdict + prioritized critiques recorded in the chat transcript. **Corrections applied this pass (all reversible via the commit that carries them):**
+- **Fixed two false citation verdicts** (integrity — the core discipline): **Agent Memory `2606.06448`** (Omri/Tambe, Stanford — real characterization competitor) was wrongly marked ✗; **ThunderAgent `2602.13692`** (real program-aware system) was in the "maybe-hallucinated" bucket. Both flipped to ✓ and added (`sota-verified-2026.md`, `reading-queue.md`).
+- **Corrected the success-rate-invariance overclaim** in `docs/metric-design.md` (it is NOT true "by construction"; must be measured — greedy+seeded, cache-on, `none` non-comparable).
+- **Narrowed the stale "no public agentic/mixed trace" phrasing** in `STATUS.md` to the four-part form.
+- **Added pilot-design issues #10–#13** (`05-experiments/pilot/README.md`): content-free chat baseline; replay-identical-stream; success-invariance-must-be-measured; LICENSE/fixture/pinning. Sharpened #3 (KV-footprint matching + eviction-victim tenant tagging) and #7 (effect size / power / bootstrap-over-tasks).
+- **Deferred to co-author decision (NOT changed):** retitle to measured scope; reconsider venue (MLSys Industry Track → likely NeurIPS D&B); de-emphasize the "Cost of Grit" brand vs. "locality tax"; add a LICENSE; add RAG-serving + multi-agent-serving coverage; write the related-work prose (3 files still placeholders).
+
+### 2026-06-14 — Landscape refresh + stress-test edits — `a58f1a3`
+4-scout web sweep. Added competitors (KVCache-in-the-Wild 2506.02634, SAGA 2605.00528, TokenCake/PPD/CacheFlow/PBKV/AgentServeSim/WRP, Efficiency Frontier, HAL, Observation-Masking, SWE-Pruner; TokenPowerBench id 2512.03024). C3 hardened vs. the vLLM×Mooncake public trace. Two-armed pilot. metric-design extended (attribution rule, replay semantics, positioning). Seam softened.
+
+### 2026-06-14 — Academic Mermaid flowchart — `707a7bf`
+Role-color-coded methodology diagram + legend in the README.
+
+### 2026-06-14 — README sharpen + adversarial honesty fixes — `dab2c27`
+Tagline/problem/contributions/methodology rewrite; reframed intent-vs-built overclaims to "planned, open issue #N".
+
+### 2026-06-14 — metric-design.md + GoodServe + seam map — `76be0cb`
+Cost-per-verified-task decision doc; resolved GoodServe; added HexAGenT/Cortex; "declared vs inferred" seam map.
+
+### 2026-06-14 — 2nd Codex review reconciliation — `d8ed255`
++2 pilot issues (#8 cost attribution, #9 hygiene controls); doc-consistency fixes.
+
+### 2026-06-14 — Annotated study brief (PDF + HTML) — `6cfde05`
+Plain-language paper-by-paper brief (`docs/agentic-inference-brief.*`).
+
+### 2026-06-14 — FlashMemory-DeepSeek-V4 added — `161249c`
+Verified 2606.09079 into the ledger (prior art for H3).
+
+### 2026-06-13 — README rewrite — `de9ac6e` · Landscape reconcile (AA-AgentPerf/Dynamo) — `9dc6249` · Working brief reconciled — `3424109` · README cleanup — `72110f6` · Initial scaffold — `ec57a70`
+Project bootstrapped, brief reconciled into the repo, AA-AgentPerf/Dynamo industry landscape verified, CONCUR resolved, foundations promoted to ✓, MLSys venue detail corrected.

@@ -140,7 +140,7 @@ The five stages, and the design choice that makes each one *valid*:
    **Cost of Grit** curve over horizon × policy × tenancy.
 5. **Gate** — apply kill criteria (is the gap above noise? is the curve super-linear?) *before* scaling.
 
-Metric definition: [`docs/metric-design.md`](docs/metric-design.md). The nine open design issues that
+Metric definition: [`docs/metric-design.md`](docs/metric-design.md). The thirteen open design issues that
 gate GPU spend: [`05-experiments/pilot/README.md`](05-experiments/pilot/README.md).
 
 ```mermaid
@@ -207,6 +207,7 @@ cost over all attempts ÷ verified tasks) — and a **kill gate** decides scale-
 
 ```
 STATUS.md                                ← current state, read first
+CHANGELOG.md                             Change & rollback log (decisions, keyed to commits)
 docs/
   agentic-inference-brief.pdf / .html    Annotated study brief — every paper summarized (start here to learn the area)
   agentic-inference-primer.md            Serving mental model + the agentic frontier

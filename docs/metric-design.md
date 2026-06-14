@@ -116,14 +116,24 @@ Fix them up front: (a) reuse unit = **exact prefix-block match** on token IDs (n
 separately (cross-request sharing is a different quantity); (c) tokenizer + block size pinned. State
 these in the paper's methods; the number is meaningless without them.
 
-## A genuine strength: lossless caching ⇒ success-rate invariance
+## Success-rate invariance — a hoped-for strength that must be MEASURED, not assumed
 
-Exact prefix caching does **not change the model's output tokens** — so **task success rate is invariant
-across the cache-policy and tenancy axes by construction.** Therefore, *for those axes*, the denominator
-(verified tasks) is held fixed for free and cost-per-verified-task **cleanly isolates serving cost** —
-the model-vs-system confound (open-issue #1 / threats #1) is much smaller than feared. The confound bites
-only along the **horizon** axis (more iterations → more successes → moving denominator), which we handle
-separately (report the success/censoring curve there). Lean on this in the methods section.
+*Intuition:* exact prefix caching is lossless, so with **greedy, seeded decode and prefix-cache ON**, the
+model's output tokens — hence task success — *should* be ~invariant across the cache-policy (LRU vs.
+retain-during-tool) and tenancy axes, letting cost-per-verified-task isolate serving cost there.
+
+**But this is NOT true "by construction"** — corrected after the 2026-06-14 judge panel flagged it as the
+most attackable sentence in the repo:
+- the **`none` (caching-off) arm** uses different kernel paths → different logits → **not numerically
+  comparable**; treat it as a control, not a success-invariant cell;
+- under **sampling**, bounded-cache recompute/preemption and nondeterministic batch composition (mixed
+  tenancy) can drift outputs → drift success;
+- **attempt counts** are latency/timeout-sensitive, which feeds the per-task denominator.
+
+**Action (don't "lean on it" — prove it):** run **greedy + fixed seeds, cache-on**; **empirically measure**
+the per-task success-rate delta across policies (paired McNemar) and report it as a noise floor; carve out
+`none` as non-comparable. *If* the measured delta is small, the model-vs-system confound argument holds —
+as a finding, not an assumption.
 
 ## Positioning (so reviewers don't dismiss it as relabeled cost-of-pass)
 

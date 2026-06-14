@@ -157,6 +157,30 @@ needs the independently-replayable artifact — give each its own protocol.
    carryover/order effects confound results. Add warmup/flush protocols, fresh isolated processes per
    cell, randomized/blocked order, and lifecycle logging.
 
-*(Source: internal pass 2026-06-13 (items 1–7, with 1 & 4 also internal) + external Codex pass
-2026-06-14 (items 8–9 + the H1-feasibility framing). The headline-metric denominator
-[cost-per-verified-*task*, group-level] is a sync decision — see the metric-design discussion.)*
+10. **The chat baseline has no content — the mixed arm is un-constructable as named.** Azure / BurstGPT
+    are *token-count-only* traces (no prompt text), but prefix-cache eviction is a function of actual
+    token-ID prefixes. Synthesize chat *content* (e.g. ShareGPT / LMSYS-Chat-1M) shaped to the
+    Azure/BurstGPT *arrival dynamics*; pre-register, and add a PII-scrub step for the synthesized content.
+11. **The infinite-cache replay must use the *identical* recorded token stream.** The online trajectory
+    is itself shaped by the bounded-cache run (latencies, timeouts, sampling drift), so "available −
+    realized" on the online stream conflates *evicted tokens* with *trajectory divergence*. Record the
+    trajectory once and replay the SAME token stream under infinite vs. bounded cache; pre-register.
+12. **"Success-rate invariance" must be MEASURED, not assumed** (see `docs/metric-design.md`). Run
+    greedy + fixed seeds, cache-on; measure the per-task success delta across policies (paired test) and
+    report it as a noise floor; the `none` arm is numerically non-comparable.
+13. **No LICENSE / artifact licensing, no example fixture, no pinning.** The headline artifact (C3) is
+    unlicensed — add `LICENSE` (Apache-2.0, code) + `LICENSE-data` (CC-BY-4.0, trace) + a committed tiny
+    `example_trace.jsonl` + a validator; pin engine SHA / tokenizer revision / benchmark commit /
+    per-repeat seeds (none currently exist).
+
+**Sharpened 2026-06-14 (judge panel):** #3 also needs **KV-footprint-matching** (not just rate-matching)
++ **eviction-victim tenant tagging** — equal token-arrival rate does not equalize KV footprint, so the
+gap can't be attributed to interleaving without knowing *whose* blocks were evicted. #7 needs a
+**pre-registered effect size + power/MDE**: the 3 repeats share the same 50 tasks (effective n ≈ 50
+paired, heavy-tailed), so bootstrap over *tasks*, not repeats; the headline locality-tax *fraction* needs
+a delta-method / bootstrap CI.
+
+*(Source: internal pass 2026-06-13 (items 1–7) + external Codex pass 2026-06-14 (items 8–9) + adversarial
+judge-panel pass 2026-06-14 (items 10–13 + the #3/#7 sharpening + the success-invariance correction +
+two falsely-dismissed real competitors: Agent Memory 2606.06448, ThunderAgent 2602.13692). The
+headline-metric denominator [cost-per-verified-*task*, group-level] is a sync decision — see `docs/metric-design.md`.)*
