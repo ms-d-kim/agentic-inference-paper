@@ -1,0 +1,5 @@
+# Pin during the pilot. Engine deps (vllm / sglang) are environment-specific — install per host.
+pyyaml>=6.0
+# vllm>=0.x          # [Vinita] serving engine — version per GPU/host
+# sglang>=0.x        # [Vinita] alt engine
+# pandas, matplotlib # analysis (add when wiring aggregate())

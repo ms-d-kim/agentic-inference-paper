@@ -1,0 +1,61 @@
+# matrix.yaml — experiment design for the agentic-serving characterization.
+#
+# Philosophy: ONE pilot cell first (cheap, kill-fast), then expand only along the axis
+# the pilot proves discriminating. Do NOT run the full cross-product up front.
+
+model_family: "Qwen2.5-Coder-32B-Instruct"   # one family for V1; cross-model is V2
+# Rationale: strongest open-weight coding model that fits 1xH100 w/ quantization and is
+# what real teams use. Swap only with a co-author decision.
+
+serving_engines:
+  - vllm        # mandatory baseline
+  - sglang      # RadixAttention prefix-tree is most relevant to the cache hypotheses
+
+benchmarks:
+  - tau2_bench          # pilot benchmark (tool-agent-user)
+  - swebench_verified   # V1 expansion
+
+methodologies:
+  - react               # pilot methodology
+  # - plan_and_execute  # V1 expansion
+
+cache_policy:           # the independent variable that should move realized hit rate
+  - none                # prefix caching off (control)
+  - lru                 # default eviction
+  - retain_during_tool  # TTL-style retention across tool gaps (cf. Continuum/CacheTTL)
+
+tenancy:                # the multi-tenant interleaving axis (core of H1)
+  - isolated            # agent traffic only
+  - mixed_0.50          # 50/50 chat:agent on one engine instance
+  # - mixed_0.25
+  # - mixed_0.75
+
+horizon_max_iters: [8, 16, 32]   # sweep for the cost-per-verified-iteration curve (H2)
+
+repeats: 3                        # per cell, for variance
+scenarios_per_cell: 50            # ~50 task instances
+
+# ---------------------------------------------------------------------------
+# PILOT CELL (run this first — ~1 week, de-risks the whole design)
+# ---------------------------------------------------------------------------
+pilot:
+  engine: vllm
+  benchmark: tau2_bench
+  methodology: react
+  cache_policy: [lru, retain_during_tool]
+  tenancy: [isolated, mixed_0.50]
+  horizon_max_iters: [16]
+  scenarios: 50
+  repeats: 3
+  # = 2 cache x 2 tenancy x 50 x 3 = 600 trajectories on one config.
+  # Primary readouts: available vs realized prefix-cache hit rate (the gap),
+  # cost-per-verified-iteration, tool-gap distribution.
+  # KILL-FAST: if isolated realized hit rate already collapses (no headroom for the
+  # tenancy axis to matter) OR if the gap is < a few % and variance swamps it,
+  # redesign before spending on the full sweep.
+
+compute:
+  target: "1xH100 (80GB) minimum; 2xH100/H200 preferred"
+  rent: "Runpod / Lambda / Vast (~$2-4/hr); pilot likely <$300"
+  full_study_estimate_usd: "500-1500 (frontier-API + GPU rental)"
+  funding: "TBD — Stanford credits / NVIDIA credits / personal (decide at sync)"

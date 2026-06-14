@@ -1,0 +1,56 @@
+# STATUS — Agentic-Serving Characterization Paper
+
+*Last reconciled: 2026-06-13. This is the single place to read "where are we." If it conflicts with
+the old planning doc, this wins — that doc is a fossil record of earlier drift.*
+
+## One-paragraph state
+Measurement-and-characterization paper for **MLSys 2027 Industry Track (~Oct 2026)**, public
+benchmarks (SWE-bench Verified, τ²-bench) + open infra (vLLM/SGLang) only. The lead contribution is
+**C1 — the cost-per-verified-iteration / "Cost of Grit" curve**, with the realized-vs-available
+**cache-locality gap** folded inside it, plus **C3 — a released mixed chat×agent, cost-labeled,
+OTel-format trace + harness** as the cross-cutting artifact. Literature review is done and
+re-verified live (`02-literature/sota-verified-2026.md`). Framing has correctly converged from an
+earlier "best recipe / optimization" dead-end to measurement. Next concrete step: run the pilot cell.
+
+## What changed recently
+- 2026-05-31: full lit review; "agentic ≠ chat" declared table stakes.
+- 2026-06-10: candidate set C1–C6 + graveyard set; lead moved to C1 (Cost of Grit).
+- 2026-06-13: live SOTA re-verification — all core competitors confirmed real; mechanism space
+  confirmed crowded; gap confirmed narrowed; primer + pilot scaffold built; several reading-queue
+  references flagged UNVERIFIED.
+
+## Honest assessment of the gap
+Narrowing fast. Mechanism paper = dead. Naive characterization = dead. Even individual measurements
+are adjacent to published work. Defensibility = the *bundle* (rigor + breadth + open reproducibility
++ the trace artifact + precise framing). Window is closing — pilot-now-or-lose-it.
+
+## Open decisions (blocking)
+1. **Co-author alignment:** confirm Vinita agrees C1 (measurement) is the lead, not a recipe paper.
+2. **Author order:** instrumentation is the credibility-critical layer and is Vinita's — decide a
+   *proposed* order before the sync.
+3. **NVIDIA disclosure:** has the one-line outside-paper disclosure been sent/cleared? Gates whether
+   this repo can go public. (`06-collab/stakeholders.md`)
+4. **Compute funding:** Stanford / NVIDIA credits / personal?
+5. **Reconcile the old planning doc** to one venue (MLSys 2027) and one lead (C1).
+
+## Framing-precision corrections (carry into the writeup)
+- Sutradhara is **synthetic-at-production-scale**, not real production; it attributes cache collapse
+  to intra-request churn + eviction, not multi-tenancy. H1 must *prove* the interleaving driver.
+- "No public trace exists" → **no public *agentic/mixed* serving trace** (ServeGen released a
+  generator on real but non-agentic data).
+
+## Repo map
+- `STATUS.md` — this file.
+- `docs/agentic-inference-primer.md` — expert primer + canonical reading list.
+- `02-literature/` — `sota-verified-2026.md` (citation source of truth), `reading-queue.md`,
+  and PLACEHOLDER stubs for the prior-session survey / related-work / lit-review (paste real text in).
+- `04-ideas/` — `candidates.md` (C1–C6), `graveyard.md` (killed ideas; check before "new" ideas).
+- `05-experiments/pilot/` — pilot design doc (`README.md`), `experiments/matrix.yaml`,
+  `harness/trace_schema.py` (metric contract, runs), `harness/run_pilot.py` (skeleton w/ ownership seams).
+- `06-collab/stakeholders.md` — Vinita / NVIDIA / faculty + IP separation.
+- `07-venues/venues.md` — venue tracking.
+
+## How to continue in Code/Cowork
+1. Unzip; `git init`; commit to a **private** remote (see README "On GitHub").
+2. `cd 05-experiments/pilot && python3 harness/trace_schema.py` to sanity-check the schema.
+3. Pilot cell + ownership split are in `05-experiments/pilot/README.md` — that's the Vinita-sync artifact.
