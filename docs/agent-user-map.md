@@ -6,6 +6,30 @@
 
 ---
 
+## 0. Stack today — what each segment runs
+
+| Segment | Stack / products in use today |
+|---|---|
+| **Inference-serving operators** | vLLM · SGLang · TensorRT-LLM · Triton Inference Server · NVIDIA Dynamo · LMCache · Mooncake · llm-d · Ray Serve |
+| **Model providers / labs** | bespoke in-house serving + vLLM / SGLang / TensorRT-LLM, Triton (kernel lang), Megatron/JAX; some TPU / own ASIC |
+| **Enterprise internal teams** | NVIDIA NIM + AI Enterprise (Triton / TensorRT-LLM), self-host vLLM, Dynamo — or Bedrock / Azure OpenAI / Vertex; Databricks, OpenShift AI |
+| **Agent frameworks / orchestration** | no engine — OpenAI / Anthropic / Bedrock APIs + vLLM / SGLang / Ollama endpoints; LiteLLM routing |
+| **Adjacent tooling / ecosystem** | OpenTelemetry · LangSmith / Langfuse / Arize / Braintrust · Portkey / LiteLLM gateways (consume vLLM / Dynamo metrics) |
+| **Agent product builders (AI-native)** | OpenAI / Anthropic / Google APIs → self-host on vLLM / SGLang / TensorRT-LLM via Fireworks / Together / Baseten / Modal at scale |
+| **Agent end-users (humans)** | none — the apps (ChatGPT, Claude, Gemini, M365 Copilot), never the engine |
+| **Agent-as-machine-client** | whatever serves it — stresses vLLM / SGLang / Dynamo prefix-cache + KV (the workload, not a stack) |
+| **Sovereign / gov / defense** | on-prem NVIDIA — NIM, Triton Inference Server, Dynamo, DGX; air-gapped vLLM / TensorRT-LLM; sovereign clouds |
+| **Edge / on-device / robotics** | NVIDIA Jetson / IGX + TensorRT · Triton (edge) · llama.cpp / Ollama on-device · ONNX Runtime |
+| **Voice / realtime** | NVIDIA Riva (ASR/TTS) + TensorRT-LLM / vLLM low-latency; LiveKit / Pipecat |
+| **System integrators** | client clouds — Bedrock / Azure / Vertex + NIM / vLLM; own reference architectures |
+| **Telco / CSP (edge)** | NVIDIA AI Aerial · edge NIM / Triton · vLLM at the MEC |
+| **NVIDIA-internal (SA / DevRel)** | NVIDIA Dynamo · NIM · Triton Inference Server · TensorRT-LLM · DGX Cloud · GenAI-Perf · NeMo |
+| **Marketplaces / aggregators** | no engine — route across partners’ vLLM / TGI / TensorRT-LLM endpoints; OpenRouter / HF Inference Providers / Bedrock |
+
+*Note: **"Triton" is two distinct things** — **Triton Inference Server** (NVIDIA's model server) and **Triton** (the GPU-kernel language, originally from OpenAI) that compiles the attention/MoE kernels inside vLLM / SGLang / TensorRT-LLM. Both appear above.*
+
+---
+
 ## 1. Framing
 
 **Partition principle.** Segments are cut by **primary economic role with respect to the agentic-inference (serving) layer** — *what defines your business in relation to the GPUs that generate tokens for agents* — not by what activity you happen to perform. This is the only axis that stays MECE once you notice that the same company (OpenAI, Google) trains models *and* runs GPUs *and* ships agents. We resolve those collisions with explicit precedence rules (§5), assigning each actor to the **single bucket that defines it**.

@@ -100,7 +100,8 @@
 <h2 class="sec" id="h-gap">Folded-in segments (completeness + MECE audit)</h2>
 <div class="grid" id="grid-gap"></div>
 
-<p class="foot">Generated via a 12-agent adversarial workflow (8 web-grounded analysts → MECE / completeness / realism critics → synthesis). Source &amp; full prose: <a href="https://github.com/ms-d-kim/grit/blob/main/docs/agent-user-map.md">github.com/ms-d-kim/grit · docs/agent-user-map.md</a>. Last updated 2026-06-15.</p>
+<p class="foot">Generated via a 12-agent adversarial workflow (8 web-grounded analysts → MECE / completeness / realism critics → synthesis). Source &amp; full prose: <a href="https://github.com/ms-d-kim/grit/blob/main/docs/agent-user-map.md">github.com/ms-d-kim/grit · docs/agent-user-map.md</a>. Last updated 2026-06-15.<br>
+<b>Two "Tritons":</b> <i>Triton Inference Server</i> = NVIDIA's model server; <i>Triton</i> = the GPU-kernel language (originally OpenAI) that compiles attention/MoE kernels inside vLLM/SGLang/TensorRT-LLM. Both appear in "Runs today".</p>
 </div>
 
 <div id="scrim"></div>
@@ -231,6 +232,23 @@ const D=[
   traj:'Token-marketplace layer growing.'},
 ];
 
+const STACK={
+ 1:'vLLM · SGLang · TensorRT-LLM · Triton Inference Server · NVIDIA Dynamo · LMCache · Mooncake · llm-d · Ray Serve — on H100/H200/GB200',
+ 2:'Mostly bespoke in-house serving; also vLLM / SGLang / TensorRT-LLM, Triton (kernel lang) + Megatron/JAX; some TPU / own ASIC',
+ 3:'NVIDIA NIM + AI Enterprise (Triton / TensorRT-LLM) · self-host vLLM · Dynamo — or via Bedrock / Azure OpenAI / Vertex; Databricks, OpenShift AI',
+ 4:'Run no engine — call OpenAI / Anthropic / Bedrock APIs + vLLM / SGLang / Ollama endpoints; LiteLLM for routing',
+ 5:'OpenTelemetry · LangSmith / Langfuse / Arize / Braintrust · Portkey / LiteLLM gateways — consume vLLM / Dynamo metrics',
+ 6:'Whatever engine serves it — stresses vLLM / SGLang / Dynamo prefix-cache + KV. The workload, not a stack',
+ 7:'OpenAI / Anthropic / Google APIs today → self-host on vLLM / SGLang / TensorRT-LLM via Fireworks / Together / Baseten / Modal as they scale',
+ 8:'None — they use the apps (ChatGPT, Claude, Gemini, M365 Copilot), never the engine',
+ 9:'On-prem NVIDIA — NIM, Triton Inference Server, Dynamo, DGX; air-gapped vLLM / TensorRT-LLM; sovereign clouds',
+ 10:'NVIDIA Jetson / IGX + TensorRT · Triton (edge) · llama.cpp / Ollama on-device · ONNX Runtime',
+ 11:'NVIDIA Riva (ASR/TTS) + TensorRT-LLM / vLLM low-latency; LiveKit / Pipecat orchestration',
+ 12:'Deploy on client clouds — Bedrock / Azure / Vertex + NIM / vLLM; their own reference architectures',
+ 13:'NVIDIA AI Aerial · edge NIM / Triton · vLLM at the MEC',
+ 14:'NVIDIA Dynamo · NIM · Triton Inference Server · TensorRT-LLM · DGX Cloud · GenAI-Perf · NeMo',
+ 15:'Run no engine — route across partners’ vLLM / TGI / TensorRT-LLM endpoints; OpenRouter / HF Inference Providers / Bedrock',
+};
 const grid={core:document.getElementById('grid-core'),gap:document.getElementById('grid-gap')};
 const state={prio:'all',buyer:'all'};
 function buyerClass(b){return b==='Direct'?'Direct':(b==='Non-buyer'||b==='Internal')?'Non-buyer':'Indirect';}
@@ -243,7 +261,8 @@ function card(d){
     <div class="badges"><span class="b prio" style="--c:${c}">${PRIO[d.prio].t}</span><span class="b">${d.buyer} buyer</span></div>
     <p class="who">${d.who}</p>
     <div class="kv"><span>Top need:</span> ${d.needs[0]}</div>
-    <div class="kv"><span>Top pain:</span> ${d.pains[0].p}</div>`;
+    <div class="kv"><span>Top pain:</span> ${d.pains[0].p}</div>
+    <div class="kv" style="margin-top:7px;color:var(--faint)"><span>Runs today:</span> ${STACK[d.id]}</div>`;
   el.onclick=()=>openD(d);
   return el;
 }
@@ -265,6 +284,7 @@ function openD(d){
     <div class="field"><div class="t">Representative players</div><div class="players">${d.players.map(p=>`<span>${p}</span>`).join('')}</div></div>
     <div class="field"><div class="t">Needs (ranked)</div><ul>${d.needs.map(n=>`<li>${n}</li>`).join('')}</ul></div>
     <div class="field"><div class="t">Pain points (root cause)</div><ul>${d.pains.map(x=>`<li>${x.p}<br><span class="cause">↳ ${x.c}</span></li>`).join('')}</ul></div>
+    <div class="field"><div class="t">Stack they run today</div><div>${STACK[d.id]}</div></div>
     <div class="field"><div class="t">Workload signature</div><div>${d.workload}</div></div>
     <div class="field"><div class="t">Inference touchpoint — what they buy</div><div>${d.touch}</div></div>
     <div class="field"><div class="t">Buying behavior</div><div>${d.buying}</div></div>
