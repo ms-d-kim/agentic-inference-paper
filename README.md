@@ -220,6 +220,7 @@ docs/
   observability-and-power.md             How the cache-visibility + statistical-power blockers get solved
   discovery-and-gaps.md                  Agents in the wild: harness/dev needs, benchmark↔production gap, public traces, who to talk to
   ecosystem-and-product-map.md           Product/business lens — ecosystem, personas, journeys, opportunities
+  agent-user-map.md                      MECE map of agent users (NVIDIA inference-PM lens): 8 segments + folded-in gaps + PM prioritization
   ecosystem-map.html                     Academic "Figure 1" interactive ecosystem map (open in a browser)
 02-literature/
   sota-verified-2026.md                  Citation ledger — source of truth (✓ / ⚠)
