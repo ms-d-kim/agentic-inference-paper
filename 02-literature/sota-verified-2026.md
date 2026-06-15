@@ -177,6 +177,7 @@ the long-horizon arm where the gap is visible; see `../05-experiments/pilot/expe
 - **Prefill-as-a-Service** — 2604.15039 ✓ — argues next-gen KVCache could go **cross-datacenter** (placement/disaggregation frontier).
 - **KVFlow venue confirmed:** 2507.07400 is a **NeurIPS 2025** poster (neurips.cc/virtual/2025/poster) — promote the venue where cited.
 - **Watch (web-found, not yet deep-read):** *TimelyLLM* (time-sensitive serving for physical-I/O agents); *Graph-CoT multi-agent serving* (2511.01633); *Agent Memory Below the Prompt* (2603.04428 — a **distinct** edge / Q4-KV multi-agent paper, NOT the Stanford "Agent Memory" 2606.06448; the old guessed-id confusion is now resolved as two real, different papers).
+- **BurstGPT** — 2401.17644 ✓ (web-verified) — 10.3M Azure-OpenAI requests over 213 days; a real *chat* serving workload (NOT agentic, NOT cost-labeled). GRIT's realistic **chat co-tenant** for the mixed arm. *(Cited in the brief + `docs/discovery-and-gaps.md`; recorded here so the ledger stays the source of truth — a Codex brief-review caught it missing.)*
 
 ## Foundations (verified 2026-06-13 per the working brief)
 

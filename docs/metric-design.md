@@ -12,7 +12,8 @@ ratified by both authors.*
   oracle (SWE-bench `FAIL_TO_PASS`, τ²-bench success); for long-horizon tasks allow **partial credit**
   (SWE-EVO-style "Fix Rate") so the signal isn't all-or-nothing.
 - **Numerator — resource cost, three units, GPU-seconds primary.**
-  - **GPU-seconds** = the reproducible scientific currency (hardware/price-neutral). *Primary.*
+  - **GPU-seconds** = the reproducible scientific currency (**price-neutral**, but NOT hardware-neutral — a
+    GPU-second varies by accelerator/precision/kernels/engine version, so pin and report all four). *Primary.*
   - **Dollars** = the buyer-facing view, reported with a *stated* price (provider/pricing-confounded —
     never primary; this is the trap [Don't Break the Cache] falls into at the API level).
   - **Joules / "verified tasks per kWh"** = the TCO + sustainability view (the established unit is
