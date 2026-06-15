@@ -20,6 +20,9 @@ here whenever you make a substantive change.*
 
 ## Log
 
+### 2026-06-15 — Agent-user map: interactive figure + 1-page exec, deployed to Vercel
+Turned the agent-user map into (a) a **self-contained interactive figure** (`grit-agent-user-map/index.html` — 15 segment cards color-coded by PM priority, filter by priority/buyer, click → detail drawer with needs/pains/workload/touchpoint/PM-implication) and (b) a **printable 1-page PM exec summary** (`grit-agent-user-map/exec.html` — at-a-glance table + the 3 HIGH bets + MECE rules + "so what"). Deployed both to Vercel production: **<https://grit-agent-user-map.vercel.app>** (interactive) and **/exec.html** (exec; both verified HTTP 200, public). `.vercel/` gitignored.
+
 ### 2026-06-15 — Agent-user map (NVIDIA inference-PM lens), via 12-agent workflow
 Added `docs/agent-user-map.md` — a MECE segmentation of "users of agents" for an NVIDIA inference-team PM, built by a 12-agent adversarial workflow (8 web-grounded segment analysts → MECE/completeness/realism critics → synthesis). Partition principle = *primary economic role w.r.t. the agentic-inference layer*. 8 actor segments (end-users · AI-native builders · enterprise internal teams · frameworks · **serving operators = the direct buyer** · the agent-as-machine-client = the workload spec, not an actor · adjacent tooling · model labs) + 6 folded-in missing segments (sovereign/gov, edge/robotics, voice/realtime, SIs, telco/CSP, NVIDIA-internal) + explicit MECE **boundary rules** (role precedence labs>operators>builders; GPU-custody = the operator test; AI-native-&-sold-to-3rd-parties = builder-vs-enterprise; + the marketplaces/aggregator gap) + a **PM-prioritization** (HIGH: operators, labs, enterprise; MEDIUM: frameworks, tooling; LOW/spec: end-users, agent-as-client). Companion to the ecosystem map; **quantitative magnitudes are flagged illustrative/directional unless cited** (not the citation ledger).
 

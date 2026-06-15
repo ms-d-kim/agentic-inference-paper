@@ -16,3 +16,5 @@ venv/
 .ipynb_checkpoints/
 # os
 .DS_Store
+# vercel deploy artifacts (project link / build cache) — deploy is from the committed HTML
+.vercel/

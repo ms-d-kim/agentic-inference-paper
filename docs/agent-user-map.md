@@ -2,6 +2,8 @@
 
 *Last updated: 2026-06-15 · companion to [`ecosystem-and-product-map.md`](ecosystem-and-product-map.md) and the interactive [`ecosystem-map.html`](ecosystem-map.html). A MECE segmentation of “users of agents” for an NVIDIA inference-team PM, generated via a 12-agent adversarial workflow (8 web-grounded segment analysts → MECE / completeness / realism critics → synthesis).* **Quantitative magnitudes below are illustrative / directional unless a source is cited** — this is a market/PM map, not the verified citation ledger ([`../02-literature/sota-verified-2026.md`](../02-literature/sota-verified-2026.md)); Dynamo’s 85–97% cache-hit figure is realized single-session under its own routing, used as motivation only.
 
+> **Live:** interactive segment map → <https://grit-agent-user-map.vercel.app> · 1-page PM exec summary → <https://grit-agent-user-map.vercel.app/exec.html> (source: `grit-agent-user-map/`).
+
 ---
 
 ## 1. Framing

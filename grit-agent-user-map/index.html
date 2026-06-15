@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Users of Agents — NVIDIA inference-PM map</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --card:#1b222c; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+    --text:#e9edf2; --muted:#9aa4b2; --faint:#6b7686;
+    --H:#76b900; --M:#d9a200; --L:#8a93a0; --spec:#8b7cf6;
+    --chip:#212a36;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#7aa2ff;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 20px 60px}
+  header h1{font-size:24px;font-weight:650;margin:0 0 4px;letter-spacing:-.01em}
+  header .sub{color:var(--muted);font-size:13.5px;margin:0 0 2px}
+  header .links{font-size:13px;margin-top:8px}
+  .insight{background:linear-gradient(180deg,rgba(118,185,0,.08),rgba(118,185,0,.02));border:1px solid rgba(118,185,0,.25);border-radius:12px;padding:12px 15px;margin:16px 0 18px;font-size:13.5px;color:#d7e6c2}
+  .insight b{color:#a6e05f}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:14px 0 6px}
+  .grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .grp .lbl{color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;margin-right:2px}
+  .chip{font:inherit;font-size:12.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line2);background:var(--chip);color:var(--text);cursor:pointer;transition:.15s}
+  .chip.on{background:#2b3a18;border-color:var(--H);color:#cbe89a}
+  .chip.buyer.on{background:#2a2230;border-color:var(--spec);color:#d9cdf6}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:6px 0 2px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:13px;margin-top:16px}
+  .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 15px 14px 18px;cursor:pointer;transition:transform .14s ease,border-color .14s,box-shadow .14s;overflow:hidden}
+  .card:hover{transform:translateY(-2px);border-color:var(--line2);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+  .card .num{color:var(--faint);font-size:11px;font-weight:600}
+  .card h3{font-size:15px;margin:2px 0 7px;font-weight:600;letter-spacing:-.01em}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .b{font-size:10.5px;padding:2px 7px;border-radius:6px;border:1px solid var(--line2);color:var(--muted)}
+  .b.prio{color:#0d1117;font-weight:700;border:none;background:var(--c)}
+  .card .who{color:var(--muted);font-size:12.5px;margin:0 0 8px}
+  .kv{font-size:12px;margin:3px 0;color:var(--text)}
+  .kv span{color:var(--faint)}
+  .gaptag{position:absolute;top:10px;right:10px;font-size:9.5px;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:1px 5px;text-transform:uppercase;letter-spacing:.05em}
+  h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin:30px 0 4px;border-top:1px solid var(--line);padding-top:18px}
+  /* drawer */
+  #scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  #scrim.on{opacity:1;pointer-events:auto}
+  #drawer{position:fixed;top:0;right:0;height:100%;width:min(560px,94vw);background:var(--panel);border-left:1px solid var(--line2);transform:translateX(102%);transition:transform .26s cubic-bezier(.22,1,.36,1);z-index:50;overflow-y:auto;padding:22px 24px 50px}
+  #drawer.on{transform:none}
+  #drawer .close{position:absolute;top:14px;right:16px;font-size:22px;color:var(--muted);background:none;border:none;cursor:pointer;line-height:1}
+  #drawer .num{color:var(--faint);font-size:12px;font-weight:600}
+  #drawer h2{font-size:20px;margin:2px 0 10px;letter-spacing:-.01em}
+  #drawer .field{margin:14px 0}
+  #drawer .field>.t{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:5px}
+  #drawer ul{margin:4px 0;padding-left:18px}#drawer li{margin:4px 0;font-size:13.5px}
+  #drawer .cause{color:var(--muted);font-size:12px}
+  #drawer .pm{background:rgba(118,185,0,.08);border:1px solid rgba(118,185,0,.28);border-radius:10px;padding:11px 13px;font-size:13.5px}
+  #drawer .pm .t{color:#a6e05f}
+  .players span{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;font-size:12px;color:var(--muted)}
+  .foot{color:var(--faint);font-size:11.5px;margin-top:26px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Users of Agents — an inference-PM map</h1>
+  <p class="sub">MECE segmentation by <b>primary economic role w.r.t. the agentic-inference (serving) layer</b>. Click any segment for the full profile. <span style="color:var(--faint)">Built for the NVIDIA inference-team lens (GRIT companion).</span></p>
+  <p class="links"><a href="./exec.html">→ 1-page PM exec summary</a></p>
+</header>
+
+<div class="insight">
+<b>The non-obvious point:</b> the literal <i>user</i> of an inference service is increasingly the <b>agent itself</b> — a machine client emitting a long, correlated, stateful request stream — not the humans/orgs "using agents," who sit behind it and never touch the serving contract. NVIDIA inference sells <b>directly to ≤3</b> of these segments; the rest are demand-shapers, SLO-setters, or standards levers. <span style="color:var(--faint)">Quantitative magnitudes are directional unless cited; Dynamo's 85–97% is realized single-session under its own routing (motivation only).</span>
+</div>
+
+<div class="controls">
+  <div class="grp"><span class="lbl">PM priority</span>
+    <button class="chip prio on" data-prio="all">All</button>
+    <button class="chip prio" data-prio="H">High</button>
+    <button class="chip prio" data-prio="M">Medium</button>
+    <button class="chip prio" data-prio="L">Low / spec</button>
+  </div>
+  <div class="grp"><span class="lbl">Buyer</span>
+    <button class="chip buyer on" data-buyer="all">All</button>
+    <button class="chip buyer" data-buyer="Direct">Direct</button>
+    <button class="chip buyer" data-buyer="Indirect">Indirect</button>
+    <button class="chip buyer" data-buyer="Non-buyer">Non-buyer / spec</button>
+  </div>
+</div>
+<div class="legend">
+  <span><i style="background:var(--H)"></i>High priority</span>
+  <span><i style="background:var(--M)"></i>Medium</span>
+  <span><i style="background:var(--L)"></i>Low / non-buyer</span>
+  <span><i style="background:var(--spec)"></i>Workload spec</span>
+</div>
+
+<h2 class="sec" id="h-core">The 8 core segments</h2>
+<div class="grid" id="grid-core"></div>
+
+<h2 class="sec" id="h-gap">Folded-in segments (completeness + MECE audit)</h2>
+<div class="grid" id="grid-gap"></div>
+
+<p class="foot">Generated via a 12-agent adversarial workflow (8 web-grounded analysts → MECE / completeness / realism critics → synthesis). Source &amp; full prose: <a href="https://github.com/ms-d-kim/grit/blob/main/docs/agent-user-map.md">github.com/ms-d-kim/grit · docs/agent-user-map.md</a>. Last updated 2026-06-15.</p>
+</div>
+
+<div id="scrim"></div>
+<aside id="drawer" aria-hidden="true"><button class="close" aria-label="Close">&times;</button><div id="dbody"></div></aside>
+
+<script>
+const PRIO={H:{c:'var(--H)',t:'HIGH'},M:{c:'var(--M)',t:'MEDIUM'},L:{c:'var(--L)',t:'LOW'},spec:{c:'var(--spec)',t:'SPEC'}};
+const D=[
+ {id:1,tier:'core',prio:'H',buyer:'Direct',name:'Inference-serving operators',who:'Whoever owns the GPU fleet & is on the hook for $/token + SLO.',players:['Together','Fireworks','Baseten','Anyscale','Modal','CoreWeave','Lambda','Nebius','hyperscalers','large self-hosters'],
+  needs:['Revenue-bearing utilization (goodput), not raw throughput','High KV-hit-rate on agent traffic','Per-tenant cost / GPU-second attribution'],
+  pains:[{p:'Agentic traffic costs 5–30× chat per task; margins erode',c:'long growing context + eviction + GPU idle during tool gaps'},{p:'Can’t attribute cost to a tenant/workload',c:'engines expose server-wide aggregates, not per-request/per-tenant'}],
+  workload:'All of it, multi-tenant: chat + agents sharing one engine.',
+  touch:'THE direct buyer — GPUs/DGX + AI Enterprise/NIM + Dynamo (Planner, KV router, NIXL) + TensorRT-LLM.',
+  buying:'Infra/platform leads; buys $/GPU-hr + the serving stack; margin-driven.',
+  pm:'Build the wedge here FIRST: agent_hints + per-tenant KV/GPU-second attribution as a measured feature; prove the goodput delta on open infra. If you build for one segment, build for this one.',
+  traj:'Exploding agent traffic; neoclouds rising fast.'},
+ {id:2,tier:'core',prio:'H',buyer:'Indirect',name:'Model providers / frontier labs',who:'Train & own the weights; ship first-party agents; run a bespoke serving stack.',players:['OpenAI','Anthropic','Google DeepMind','Meta','Qwen / Alibaba','DeepSeek','Mistral'],
+  needs:['Max tok/s/GPU on their MoE shapes','Cross-tenant KV locality','Silicon optionality (leverage vs lock-in)'],
+  pains:[{p:'Realized KV hit-rate << offline-available, worst on first-party agents',c:'the orchestrator↔engine seam at scale'},{p:'Substitution pressure (TPU/Trainium/own ASICs)',c:'NVIDIA margin + supply'}],
+  workload:'Everything, including their own long-horizon agents.',
+  touch:'Largest compute spend but mostly indirect (via clouds) + direct co-designer + partial competitor — DGX Cloud, NVL72, co-design TRT-LLM/Dynamo; many bring their own engine.',
+  buying:'Co-design SLAs + massive reserved capacity; strategic, multi-year.',
+  pm:'Don’t fight on kernels (shared battle with ASICs). Win the orchestrator↔engine SEAM: cross-tenant KV-locality control plane + day-one optimized serving per new MoE. Ship auditable cost-per-verified-task as the trojan horse.',
+  traj:'Largest dollar spend; biggest substitution risk.'},
+ {id:3,tier:'core',prio:'H',buyer:'Direct',name:'Enterprise internal agent teams',who:'Platform / CoE teams at non-AI-native orgs building agents for their own use.',players:['Banks (JPMC)','telcos','retail','healthcare','manufacturing','public sector — via Agentforce / Copilot Studio / NIM'],
+  needs:['Governed, in-perimeter serving','Defensible cost-per-resolved-task','Auditability & compliance'],
+  pains:[{p:'POCs die before production',c:'unclear ROI/utilization math + reliability + governance gaps'},{p:'CFO can’t see ROI / cost attribution',c:'no per-task or per-tenant meter'}],
+  workload:'Support / ops / data agents; mixed with internal chat; bursty.',
+  touch:'Direct for self-hosters — NVIDIA AI Enterprise + NIM, DGX/HGX, Dynamo under the hood.',
+  buying:'Platform/CoE team + a CFO ROI gate; 3–5-year deployments — they cannot churn to a cheaper API.',
+  pm:'Package a "governed agent factory in a box" — NIM + on-prem serving + cost/ROI attribution as one SKU. Largest net-new DURABLE TAM specific to an inference team.',
+  traj:'Sovereignty/regulation forcing on-prem; biggest net-new TAM.'},
+ {id:4,tier:'core',prio:'M',buyer:'Non-buyer',name:'Agent frameworks / orchestration',who:'OSS-led control planes that drive the loop but don’t run the model.',players:['LangGraph','CrewAI','LlamaIndex','OpenAI Agents SDK','Microsoft AutoGen / Agent Framework'],
+  needs:['Model/provider portability','Cheap repeated-prefix calls','Session continuity across turns'],
+  pains:[{p:'Their stateless abstraction destroys KV reuse',c:'each call re-sent with no engine-side session/prefix continuity'}],
+  workload:'They shape the request stream — they sit on the seam.',
+  touch:'Non-buyer, highest-leverage standards lever; point traffic at NIM/Dynamo. NeMo Agent Toolkit is NVIDIA’s entry.',
+  buying:'OSS adoption, not dollars.',
+  pm:'Own the orchestrator↔engine continuity contract (session affinity, prefix-reusable, hold-KV-during-tool-gap, priority) and make Dynamo/NeMo the reference impl — before the seam ossifies into a lab-proprietary stateful API.',
+  traj:'Consolidating; labs’ own SDKs encroaching.'},
+ {id:5,tier:'core',prio:'M',buyer:'Indirect',name:'Adjacent tooling & ecosystem',who:'Observability/eval, gateways/routers, agent memory, guardrails, FinOps.',players:['LangSmith','Braintrust','Arize','Helicone','Portkey','LiteLLM','Mem0','Lakera','Vantage'],
+  needs:['Standard serving telemetry','KV-location routing primitives','True cost attribution'],
+  pains:[{p:'Can’t see/attribute true cost; route blind to KV locality',c:'no standard cached-token / KV-event telemetry across engines'}],
+  workload:'Integrate with the stack; gateways shape routing.',
+  touch:'Mostly indirect; the gateway sub-segment partners/competes with Dynamo’s router. Consume NIM/Dynamo telemetry + KV APIs.',
+  buying:'Integrate, don’t buy GPUs.',
+  pm:'Standardize OTel-GenAI cached-token + KV-event telemetry + a prefix-pin / KV-location / cancel API so the FinOps/observability ecosystem markets your cost-per-verified-task FOR you. Trap: a model-agnostic gateway owning the abstraction and making Dynamo an interchangeable backend.',
+  traj:'Agent observability / FinOps booming.'},
+ {id:6,tier:'core',prio:'M',buyer:'Indirect',name:'Agent product builders (AI-native)',who:'VC-backed firms whose shipped PRODUCT is an agent.',players:['Cursor / Anysphere','Cognition (Devin)','Replit','Perplexity','Sierra','Harvey','Factory','All Hands AI'],
+  needs:['Low, predictable cost-per-completed-task','Reliability at long horizons','Provider portability + long-context KV reuse'],
+  pains:[{p:'Cost/task explodes super-linearly with horizon while $/token is flat',c:'KV eviction → re-prefill on every long loop'},{p:'Margin squeeze',c:'pay API token price, charge per seat/task'}],
+  workload:'Coding / web / research; long-horizon; bursty.',
+  touch:'Indirect today (tokens from labs/IaaS) → direct as they self-host for margin (NIM/TRT-LLM/Dynamo + reserved GPU).',
+  buying:'Founder/eng decide; flip to self-host at scale.',
+  pm:'Give them cost-per-verified-task visibility + a cheap self-host on-ramp (NIM) for when API margins stop working. Durable only once they go direct.',
+  traj:'Scaling fast; some vertically integrating to self-host.'},
+ {id:7,tier:'core',prio:'L',buyer:'Non-buyer',name:'Agent end-users (human consumers)',who:'People who USE agent products but never touch the serving layer.',players:['ChatGPT Plus/Pro','Gemini','Claude','Perplexity','M365 Copilot seats','LoB no-code users'],
+  needs:['Bounded cost-per-finished-task','Tight tail TTFT on long tasks','Trust / reliability'],
+  pains:[{p:'Surprise metered caps & bills (post-2026 "Tokenpocalypse")',c:'per-task cost is opaque and blows up with horizon'},{p:'Slow/variable tail latency',c:'cache misses + queueing downstream'}],
+  workload:'Copilot + autonomous; they press go and wait.',
+  touch:'Indirect / non-buyer — buy a $20–200 sub or an IT-issued seat. A workload spec & SLO-setter, not a customer.',
+  buying:'Consumer sub or IT seat.',
+  pm:'Don’t sell here. Treat as the demand signal + SLO that operators/builders must satisfy.',
+  traj:'Mass adoption; metered-pricing era.'},
+ {id:8,tier:'core',prio:'spec',buyer:'Non-buyer',name:'The agent runtime as a machine client',who:'NOT an actor — the correlated request stream of one agent task.',players:['(the workload itself — the ReAct/tool loop’s requests)'],
+  needs:['KV-prefix reuse across turns','Survive the tool-gap (resume without re-prefill)','Priority + fan-out + retry semantics'],
+  pains:[{p:'Tool-gap eviction → full re-prefill on resume',c:'workflow-agnostic engine evicts the prefix during the pause'}],
+  workload:'It IS the workload: long growing context, tool-gap pauses, re-entry, fan-out, retries.',
+  touch:'Non-buyer; it is the serving SPEC — it justifies every Dynamo agentic feature.',
+  buying:'— (no wallet).',
+  pm:'Design the serving contract to this request signature. The unit of measurement (and what GRIT instruments), not an independent buyer.',
+  traj:'The cross-cutting workload axis.'},
+ {id:9,tier:'gap',prio:'H',buyer:'Direct',name:'Sovereign / government / defense',who:'Gov, defense, and sovereign-cloud agent programs.',players:['national/sovereign clouds','defense programs','regulated public sector'],
+  needs:['Frozen, certifiable serving SKU','Reuse-disable / isolation controls','Air-gapped / on-prem'],
+  pains:[{p:'Cross-tenant KV reuse becomes a LEAKAGE LIABILITY',c:'the core efficiency thesis inverts under data-isolation mandates'}],
+  workload:'Isolated, single-tenant, air-gapped; no cross-tenant sharing allowed.',
+  touch:'Direct — certifiable on-prem NVIDIA serving; reuse-disable as a feature.',
+  buying:'Procurement + accreditation; long cycles, high margin.',
+  pm:'Highest-value addition: it INVERTS the cross-tenant-KV-reuse thesis — ship a frozen, certifiable SKU with reuse-off controls. Distinct from every other segment.',
+  traj:'Sovereign-AI surge.'},
+ {id:10,tier:'gap',prio:'M',buyer:'Direct',name:'Edge / on-device / robotics / physical-AI',who:'Agents that act in the physical world or run at the edge.',players:['robotics','industrial','automotive','Jetson / IGX deployments'],
+  needs:['On-device / edge serving','Real-time control-loop latency','Power/thermal-bounded inference'],
+  pains:[{p:'Datacenter serving assumptions don’t hold at the edge',c:'latency, power, and connectivity regime is different'}],
+  workload:'Tight real-time loops; small/quantized models; intermittent connectivity.',
+  touch:'Direct — Jetson/IGX + edge-optimized NIM/TensorRT.',
+  buying:'Embedded/robotics teams; hardware-led.',
+  pm:'A distinct latency/power regime — edge-serving + on-device KV management, not the datacenter Dynamo story.',
+  traj:'Physical-AI / robotics ramp.'},
+ {id:11,tier:'gap',prio:'M',buyer:'Indirect',name:'Voice / realtime / multimodal-streaming',who:'Low-latency conversational & streaming agents.',players:['voice agents','realtime assistants','contact-center AI'],
+  needs:['Barge-in / cancellation primitives','Jitter budget','ASR→LLM→TTS co-scheduling'],
+  pains:[{p:'A missing latency regime in the serving stack',c:'cancellation + tight inter-token jitter aren’t first-class'}],
+  workload:'Realtime, interruptible, multi-model pipelines.',
+  touch:'Indirect/direct — needs cancel + priority primitives in the engine.',
+  buying:'Voice/CX product teams.',
+  pm:'Add cancellation + jitter-aware scheduling + multi-model co-scheduling to the serving contract.',
+  traj:'Voice agents going mainstream.'},
+ {id:12,tier:'gap',prio:'M',buyer:'Indirect',name:'System integrators & consultancies',who:'Firms that build agents for OTHER companies.',players:['Accenture','Deloitte','Capgemini','boutique AI SIs'],
+  needs:['Reference architectures','Repeatable, supportable serving stacks','Portability across client clouds'],
+  pains:[{p:'Each client deploy is bespoke',c:'no standard, supportable agent-serving blueprint'}],
+  workload:'Many client deployments; mirrors enterprise.',
+  touch:'Indirect but high-leverage — they steer which stack enterprises buy.',
+  buying:'Partner channel; influence > direct spend.',
+  pm:'Channel/partner play: certified NIM+Dynamo reference architectures the SIs resell into enterprises.',
+  traj:'Agentic services boom.'},
+ {id:13,tier:'gap',prio:'M',buyer:'Direct',name:'Telco / CSP operators (network edge)',who:'Carriers serving agents at the network/MEC edge.',players:['telcos','CSPs','MEC operators'],
+  needs:['Edge/MEC serving','Latency + data-residency','Sovereign-ish isolation'],
+  pains:[{p:'Centralized cloud serving is too far/coupled',c:'latency + residency at the edge'}],
+  workload:'Distributed edge; latency-bound; residency-constrained.',
+  touch:'Direct — NVIDIA AI Aerial / edge serving + NIM.',
+  buying:'Carrier infra; capex-heavy.',
+  pm:'Edge-distributed serving + residency controls; adjacent to sovereign.',
+  traj:'Telco-AI / edge buildout.'},
+ {id:14,tier:'gap',prio:'M',buyer:'Internal',name:'NVIDIA-internal: SA / SE / DevRel / DGX-Cloud ops',who:'The distribution arm + dogfooding ground.',players:['solutions architects','sales engineering','DevRel','DGX Cloud ops'],
+  needs:['Reference deployments & demos','Dogfooding feedback loop','Adoption tooling'],
+  pains:[{p:'Serving features don’t convert to adoption without enablement',c:'no internal distribution/dogfooding loop'}],
+  workload:'Internal benchmarking + customer pilots.',
+  touch:'Internal — they determine whether Dynamo achieves the adoption that makes it sticky.',
+  buying:'— internal.',
+  pm:'Treat as a first-class internal customer: the seam only wins if SA/DevRel/DGX-Cloud can deploy and demo it.',
+  traj:'Scales with Dynamo go-to-market.'},
+ {id:15,tier:'gap',prio:'M',buyer:'Indirect',name:'GPU/model marketplaces & aggregators',who:'Resellers/routers with no GPU custody and no weights.',players:['OpenRouter','Hugging Face Inference Providers','Replicate (marketplace)','AWS Bedrock (marketplace)','Vercel AI Gateway'],
+  needs:['Cheapest/fastest backend to resell','Routing across operators','Margin on resold tokens'],
+  pains:[{p:'Backends are interchangeable to them',c:'they arbitrage on price/latency, not stack loyalty'}],
+  workload:'Re-price and re-route others’ capacity.',
+  touch:'Indirect demand-aggregator/arbitrageur — price-sensitive demand steerable toward NIM-on-Dynamo endpoints.',
+  buying:'Resell operator capacity at a margin.',
+  pm:'Make NIM-on-Dynamo endpoints the cheapest/fastest to resell so aggregators route volume to NVIDIA-served open weights. (The MECE-audit gap: not an operator — no custody; not a lab — no weights.)',
+  traj:'Token-marketplace layer growing.'},
+];
+
+const grid={core:document.getElementById('grid-core'),gap:document.getElementById('grid-gap')};
+const state={prio:'all',buyer:'all'};
+function buyerClass(b){return b==='Direct'?'Direct':(b==='Non-buyer'||b==='Internal')?'Non-buyer':'Indirect';}
+function card(d){
+  const c=PRIO[d.prio].c;
+  const el=document.createElement('div');el.className='card';el.style.setProperty('--c',c);
+  el.dataset.prio=d.prio;el.dataset.buyer=buyerClass(d.buyer);
+  el.innerHTML=`${d.tier==='gap'?'<span class="gaptag">added</span>':''}
+    <div class="num">#${d.id}</div><h3>${d.name}</h3>
+    <div class="badges"><span class="b prio" style="--c:${c}">${PRIO[d.prio].t}</span><span class="b">${d.buyer} buyer</span></div>
+    <p class="who">${d.who}</p>
+    <div class="kv"><span>Top need:</span> ${d.needs[0]}</div>
+    <div class="kv"><span>Top pain:</span> ${d.pains[0].p}</div>`;
+  el.onclick=()=>openD(d);
+  return el;
+}
+function render(){
+  grid.core.innerHTML='';grid.gap.innerHTML='';
+  D.forEach(d=>{
+    const okP = state.prio==='all' || (state.prio==='L'? (d.prio==='L'||d.prio==='spec') : d.prio===state.prio);
+    const okB = state.buyer==='all' || buyerClass(d.buyer)===state.buyer;
+    if(okP&&okB) grid[d.tier].appendChild(card(d));
+  });
+}
+function openD(d){
+  const c=PRIO[d.prio].c;
+  document.getElementById('dbody').innerHTML=`
+    <div class="num">#${d.id} · ${d.tier==='gap'?'folded-in segment':'core segment'}</div>
+    <h2>${d.name}</h2>
+    <div class="badges"><span class="b prio" style="--c:${c}">${PRIO[d.prio].t} priority</span><span class="b">${d.buyer} buyer</span></div>
+    <p class="who" style="color:var(--muted)">${d.who}</p>
+    <div class="field"><div class="t">Representative players</div><div class="players">${d.players.map(p=>`<span>${p}</span>`).join('')}</div></div>
+    <div class="field"><div class="t">Needs (ranked)</div><ul>${d.needs.map(n=>`<li>${n}</li>`).join('')}</ul></div>
+    <div class="field"><div class="t">Pain points (root cause)</div><ul>${d.pains.map(x=>`<li>${x.p}<br><span class="cause">↳ ${x.c}</span></li>`).join('')}</ul></div>
+    <div class="field"><div class="t">Workload signature</div><div>${d.workload}</div></div>
+    <div class="field"><div class="t">Inference touchpoint — what they buy</div><div>${d.touch}</div></div>
+    <div class="field"><div class="t">Buying behavior</div><div>${d.buying}</div></div>
+    <div class="field"><div class="t">Trajectory</div><div>${d.traj}</div></div>
+    <div class="pm"><div class="t" style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">NVIDIA inference-PM implication</div>${d.pm}</div>`;
+  document.getElementById('drawer').classList.add('on');
+  document.getElementById('drawer').setAttribute('aria-hidden','false');
+  document.getElementById('scrim').classList.add('on');
+}
+function closeD(){document.getElementById('drawer').classList.remove('on');document.getElementById('scrim').classList.remove('on');document.getElementById('drawer').setAttribute('aria-hidden','true');}
+document.getElementById('scrim').onclick=closeD;
+document.querySelector('#drawer .close').onclick=closeD;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeD();});
+document.querySelectorAll('.chip.prio').forEach(b=>b.onclick=()=>{state.prio=b.dataset.prio;document.querySelectorAll('.chip.prio').forEach(x=>x.classList.toggle('on',x===b));render();});
+document.querySelectorAll('.chip.buyer').forEach(b=>b.onclick=()=>{state.buyer=b.dataset.buyer;document.querySelectorAll('.chip.buyer').forEach(x=>x.classList.toggle('on',x===b));render();});
+render();
+</script>
+</body>
+</html>
