@@ -146,3 +146,45 @@ KV reuse but report latency/JCT/memory, never cost-per-verified-task. **Our cont
 Therefore the **headline number is the locality-tax fraction** — *what share of cost-per-verified-task is
 attributable to eviction / the realized-vs-available gap* — not the cost curve itself. Cite Cost-of-Pass
 as the anchor; do not imply the metric is new.
+
+### The locality tax must be a *same-stream counterfactual*, not a "share of the gap" (Codex review, 2026-06-14)
+
+**The most serious objection:** "the locality-tax fraction" as written above is **not identified**. The
+difference between $/token and $/verified-task absorbs context growth, iteration count, failed attempts,
+tool cost, queueing, batch composition, and model behavior — a cache-hit-rate delta cannot, by itself,
+claim any particular share of GPU-seconds. The marginal A/B rule isolates "what adding the agent cost,"
+which includes *every* interaction with chat, not eviction specifically. As stated, the headline is
+attackable as hand-waving.
+
+**Fix — define the tax as an intervention on one frozen stream (this becomes the real C1 primitive):**
+1. Record the agent trajectory **once** (issue #11). Freeze the exact ordered token/block stream.
+2. Replay that **identical** stream twice under the real engine schedule: (a) the **bounded** cache (what
+   shipped), (b) a **counterfactual where every reuse-eligible prefix block is resident** (oracle/
+   infinite-resident cache), holding model, decode, ordering, and offered load fixed.
+3. **locality tax ≡ Δ GPU-seconds (bounded − resident) per verified task.** This is a paired,
+   same-stream causal contrast attributable *only* to eviction/residency — not a decomposition of a
+   noisy ratio. Report it as the headline; the "fraction" is then `tax ÷ cost-per-verified-task`, a
+   *derived* quantity, never the primitive.
+4. If the resident-cache counterfactual cannot be realized on stock engines (it likely needs the engine
+   work in `observability-and-power.md` §1), **that gates C1** — say so, don't paper over it.
+
+### Two scope-matched estimands for the gap (Codex review, 2026-06-14 — corrects an invariant bug)
+
+The replay section above scopes *available* reuse to the **agent's own lineage**, but **realized** reuse
+read from engine counters can include hits served from **other requests / the chat tenant's blocks** —
+so on the own-lineage scope, `realized` can *exceed* `available`, and the claimed `0 ≤ realized ≤
+available ≤ 1` invariant (pilot issue #1) is **false**. Define two estimands, each on a *matched*
+denominator, and never mix them:
+- **lineage gap** — both `available` and `realized` restricted to the agent's own-lineage prefix hits.
+- **global-stream gap** — both computed over all cross-request hits the engine actually served.
+Engine cache keys differ too (vLLM block-hash vs SGLang radix match), so eligibility is **engine-specific**;
+never pool engines for this number (cf. issue #16).
+
+### Denominator = binary verified successes; partial credit is supplementary (Codex review, 2026-06-14)
+
+The headline denominator is the count of **binary** verified successes (`FAIL_TO_PASS` / τ²-success), over
+a **frozen task population** with a **pre-registered retry policy** — `total GPU-seconds ÷ binary successes`.
+Partial credit (SWE-EVO "Fix Rate") is reported **only** as a separate supplementary curve; it must not enter
+the headline denominator (a score-sum denominator is arbitrary). **Do not pre-select "solvable" tasks** for
+the headline (that conditions on the outcome); if a solvable subset is used, it is a *declared subpopulation*
+with the floor reported, not the headline number.

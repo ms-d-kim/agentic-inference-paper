@@ -27,11 +27,18 @@ evictions are gettable. The one genuinely missing piece is **per-tenant eviction
 **How we get attribution, in preference order:**
 1. **Tag requests by tenant; read per-request `num_cached_tokens`.** Gives realized reuse per tenant with
    zero engine changes. (Do this regardless.)
-2. **Correlate `SchedulerStats` eviction events to block→request ownership.** If the event stream carries
-   block ids, no patch needed. If not, a *small* block-manager hook (Vinita's layer) logs
-   `(evicted_block, owning_request, tenant)` — a few lines, not a new system.
-3. **Footprint-matched proxy (issue #3).** If neither, run agent-only vs. agent+chat with a *matched* KV
-   footprint; the **delta** in realized reuse is the interleaving tax even without naming the victim block.
+2. **Block-owner lifecycle attribution — this is an engine *patch*, not "a few lines" (corrected
+   2026-06-14 after Codex primary-source check).** vLLM's eviction telemetry exposes lifetime / idle-time /
+   reuse-gap statistics — it does **not** carry the evicted block's id, owning request, or tenant. So
+   "correlate `SchedulerStats` events to ownership" does **not** work off-the-shelf. Attribution requires a
+   **version-pinned block-manager patch** that logs `(evicted_block_hash, owner_request_id, tenant)` at the
+   moment of eviction, and that patch must be **validated against controlled known-eviction microbenchmarks**
+   before it's trusted. Treat this as real instrumentation scope (Vinita's layer), and as a **C1 gate**:
+   if the patch isn't feasible/validated, per-tenant victim attribution doesn't exist.
+3. **Footprint-matched proxy (issue #3) — a weaker fallback, not equivalent.** Agent-only vs. agent+chat
+   at a *matched* KV footprint gives a **delta** in realized reuse, but it does **not** name the victim
+   block and cannot prove *chat* evicted *the agent's* state (the delta also moves with batch composition
+   and scheduling). Report it as suggestive, not as causal attribution.
 
 **First action — the instrumentation spike (1 day, 1 config, before any GPU spend):** confirm which of
 1/2/3 the stock engines actually give us. This is the cheapest possible de-risk of issue #15.
@@ -99,11 +106,13 @@ Three independent things have to hold; each has a pre-registered guard:
   pre-select a solvable subset; make τ²-bench (higher success rate) the *primary* curve and SWE-bench the
   *stress* arm; report successes-per-arm; widen N if the floor is too low. **Pre-register a minimum
   successes-per-cell** before spending.
-- **Pre-registered MDE + power (#7).** Decide the smallest **locality-tax fraction** worth detecting (e.g.
-  10%), pick N (tasks × seeds) to detect it at ~80% power, and **bootstrap confidence intervals over tasks**
-  (tasks are the unit of randomness, not trajectories). The matrix —
-  `{τ²-bench, SWE-bench Verified} × {isolated, mixed} × {LRU, retain-during-tool} × 50 tasks × 3 seeds
-  ≈ 1,200 trajectories` — is *sized* for this; the power calc on pilot data confirms or adjusts it.
+- **Pre-registered MDE + power (#7) — NOT yet established (corrected 2026-06-14).** The 1,200-trajectory
+  matrix is **not** "sized for 80% power" — there is currently **no variance estimate, no MDE calculation,
+  and no power result**, and the effective sample is ~50 *tasks* (the 3 repeats share the same tasks), with
+  arrival schedules and server runs adding a second cluster level. The honest order of operations: (1) run a
+  micro-pilot; (2) estimate task-level and run-level variance (and intraclass correlation); (3) **then**
+  pre-register a *cluster-aware* power calc (bootstrap/`delta-method` CI over **tasks**, not trajectories) +
+  a minimum-successes-per-cell floor. Only after that can any "N is sufficient" claim be made.
 - **Success-invariance measured, not assumed (#12).** Cost-per-task only compares across arms if the *set* of
   solved tasks is roughly stable. Greedy decode + fixed seeds, cache-on; the `none` arm is non-comparable by
   design; **measure** the drift, don't assume it away.

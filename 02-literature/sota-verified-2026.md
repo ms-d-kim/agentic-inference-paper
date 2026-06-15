@@ -44,7 +44,7 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 | ScaleSim | 2601.21473 | multi-agent simulation, invocation-distance memory mgmt | ✓ |
 | Aragog | 2511.20975 | JIT model routing for agentic workflows | ✓ |
 | AWO (meta-tools) | 2601.22037 | compile recurring behaviors into deterministic meta-tools | ✓ |
-| CONCUR | 2601.22705 | ICML 2026 — congestion-based concurrency control for agentic batch inference | ✓ |
+| CONCUR | 2601.22705 | *ICML'26 claimed — venue acceptance unconfirmed on arXiv* — congestion-based concurrency control for agentic batch inference | ✓ |
 | HexAGenT | 2605.16637 | workflow- & heterogeneity-aware scheduling; request as an online-revealed DAG (verified 2026-06-14) | ✓ |
 | Cortex | 2510.14126 | workflow-aware resource pooling/scheduling from a compiled call graph + per-request SLO slack; notes platforms are "workflow-agnostic" (verified 2026-06-14) | ✓ |
 
@@ -54,8 +54,8 @@ treat as suspect until checked; ✗ = ID in prior notes appears wrong.*
 > sparsification (importance prediction), NOT multi-tenant interleaving or tool-gap survival — so it
 > does **not** pre-empt C1, but it is prior art for **H3**'s "phase-aware retention" (a learned version
 > of the same idea) and reinforces the crowded mechanism space. Caveats: DeepSeek-V4-architecture-coupled
-> (not a drop-in vLLM/SGLang policy for the Qwen pilot); preliminary, project suspended — treat figures
-> as unsettled.
+> (not a drop-in vLLM/SGLang policy for the Qwen pilot); preliminary — treat figures as unsettled.
+> *(2026-06-14: removed an unsourced "project suspended" claim — not supported by the arXiv record.)*
 
 ### The orchestrator↔engine seam: declared vs. inferred (verified 2026-06-14)
 
@@ -68,7 +68,7 @@ break this seam, and it splits into two families:
   call graph + SLO slack), Autellix + ThunderAgent (2602.13692, agents/workflows-as-programs), Sutradhara
   (explicit orchestrator-engine co-design).
 - **Inferred** (the engine *guesses*, no signal): Continuum/CacheTTL (TTL heuristic — the agent will be
-  back), GoodServe (infers task type from the prompt at the router).
+  back), GoodServe (predicts output length + GPU state at the router — task type is a feature, not a hint).
 - **Cross-request/agent KV awareness** (a sub-form): KVCOMM, SparseX, TokenDance share/dedupe KV across
   interleaved or cooperating agents.
 
@@ -92,11 +92,11 @@ most of the reuse, the measured value of awareness is small — which is itself 
 | More with Less (turn-control for coding agents) | 2510.16786 | cost-per-patch (~$5.85 avg, ~$7.80 correct), 41–58 median turns — capability side, not serving | ✓ |
 | Latency-Reliability-Cost tradeoffs in agentic workflows | 2605.23929 | analytical tradeoff model | ✓ |
 | SWE-EVO (long-horizon SE benchmark) | 2512.18470 | multi-PR tasks, "Fix Rate" partial-progress metric | ✓ |
-| **Cost-of-Pass** (economic eval framework) | 2504.13359 | ICLR 2026 — expected $ for a *correct* solution (Farrell efficiency); the **academic anchor for our cost-per-verified-task**; we move it from the API black box into open-infra internals | ✓ |
+| **Cost-of-Pass** (economic eval framework) | 2504.13359 | Stanford (Erol, El, Suzgun, Yüksekgönül, Zou); OpenReview `vC9S20zsgN` (ICLR'26 submission — *acceptance unconfirmed*) — expected $ for a *correct* solution (Farrell efficiency); the **academic anchor for our cost-per-verified-task**; we move it from the API black box into open-infra internals | ✓ |
 | Efficient Agents | 2508.02694 | efficiency–effectiveness tradeoff; 28.4% cost-of-pass improvement on GAIA (capability side) | ✓ |
 | EET (early termination for SE agents) | 2601.05777 | experience-driven early stopping; −32% avg cost, ≤0.2% resolution loss — the "when to stop gritting" lever | ✓ |
 | TokenPowerBench (energy) | AAAI | benchmarks **J/token** power draw of LLM inference — the energy numerator for the cost-of-grit | ✓ |
-| **GoodServe** (agentic goodput) | 2605.16867 | SJTU/CUHK-SZ — agentic **goodput** = E2E-SLO completions/s over heterogeneous resources; router-layer, *infers* task type (no hints); no cost-to-success, no released trace. The **throughput-side dual** of our cost-per-verified-task — see `../docs/metric-design.md` | ✓ |
+| **GoodServe** (agentic goodput) | 2605.16867 | SJTU/CUHK-SZ — agentic **goodput** = E2E-SLO completions/s over heterogeneous resources; router-layer; **predicts output length** (MoE-of-MLPs, *task type as a feature*) + GPU serving state, predict-and-rectify routing (no hints); no cost-to-success, no released trace. The **throughput-side dual** of our cost-per-verified-task — see `../docs/metric-design.md` *(2026-06-14: corrected — earlier "infers task type" was imprecise)* | ✓ |
 
 ## Industry / vendor benchmarks & systems (verified real online 2026-06-13)
 
@@ -148,7 +148,16 @@ PBKV (predict agent invocation) 2605.06472 · AgentServeSim (simulator) 2606.096
 reporting cache hit 1.7%→92.2% via a distributed KV pool. **Agent-only, NOT cost-labeled, NOT mixed** → our
 narrowed claim (mixed chat+agent **+ cost-labeled** open-infra trace) survives, but this is the closest
 prior artifact — cite + differentiate. Dynamo v1.2–1.3 is adding an "Agent Trajectory Interchange Format"
-+ agentic trace-replay in-tree — watch.
++ agentic trace-replay in-tree — watch. **⚠ The exact vLLM×Mooncake figures (610 / ~33 turns / 94% /
+1.7%→92.2%) lack a recorded primary URL here — locate the vLLM blog post and pin it before any of these
+numbers enter a draft (Codex review flagged them unverifiable from the repo).**
+
+- **GAIATrace** — 2606.01725 (✓ verified 2026-06-14, web) — *"Characterization of Multi-Model Agentic AI
+  Systems on General Tasks via Trace-Driven Simulation"*: a **token-level** trace of two agentic systems
+  (MiroThinker, OWL) on **GAIA** + a trace-driven simulator (**Vidur-Agent**); "open-sourced upon
+  publication." **Agent-only, general tasks, NOT mixed, NOT cost-labeled** → C3's *mixed + cost-labeled*
+  niche holds, but this joins vLLM×Mooncake as the closest public-agent-trace prior art — cite + differentiate.
+  *(Added 2026-06-14 after a Codex review caught it missing from this ledger despite the 06-14 sweep.)*
 
 **Cost/eval + harness confounds (new):** Efficiency Frontier 2605.23071 (amortized-reuse cost) · "Price of
 Progress" 2511.23455 · HAL accuracy-cost Pareto 2510.11977 · Observation-Masking / Complexity Trap

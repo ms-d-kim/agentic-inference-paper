@@ -30,8 +30,8 @@ motivation only, never as research evidence):**
     agents/MW, SLO tiers, closed test set; bears on C1 distinctness + C3 (no public trace).
 11. **FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention** (2606.09079 ✓, Tencent et al.) — learned
     prediction of query-critical KV chunks. Read for **H3** (a learned version of "phase-aware retention"
-    = prior art) + C2. Note: *intra-request* long-context, DeepSeek-V4-coupled, preliminary/suspended —
-    not the multi-tenant/agentic-loop regime, and it does NOT touch C1.
+    = prior art) + C2. Note: *intra-request* long-context, DeepSeek-V4-coupled, preliminary (status
+    unconfirmed) — not the multi-tenant/agentic-loop regime, and it does NOT touch C1.
 
 **Metric anchors + newly-found competitors (verified 2026-06-14 — see `docs/metric-design.md`):**
 12. **Cost-of-Pass** (2504.13359 ✓, ICLR 2026) — the economic-eval framework; academic anchor for

@@ -51,3 +51,32 @@ elsewhere are cross-referenced rather than restated.*
 
 9. **Don't cite vendor headline numbers** (model-launch blogs, SWE-bench Pro marketing figures) as
    research evidence — use the paper plus your own measurement. (cf. primer Part E #5.)
+
+## Confounds the design must control (added 2026-06-14, external Codex pass)
+
+*These were absent and are the ones most likely to invalidate the result. Each must map to a controlled
+variable, a randomized variable, or an admitted limitation in the methods section.*
+
+10. **Saturation / provisioning regime.** The seam only bites under bounded cache + pressure; if the box is
+    well-provisioned the gap vanishes. Pre-register the KV-pressure regimes (#4) and report where the effect
+    appears and disappears — don't report a single operating point as "the" result.
+11. **Chat-tenant SLO harm.** The mixed arm can degrade the *chat* co-tenant's latency/SLO; an agent "win"
+    paid for by chat regressions is not a win. Measure and report both tenants' SLOs.
+12. **Synthetic-mixture validity.** Benchmark agents + a synthetic chat stream have no real joint arrival
+    correlations or shared-prefix structure; the "mixed" workload may not resemble production. Drive the chat
+    co-tenant from a *real* trace (BurstGPT/Azure, cf. `discovery-and-gaps.md`) and state the residual gap.
+13. **Instrumentation & engine-patch perturbation.** The block-owner attribution patch (observability §1)
+    and added logging change timing/throughput — the act of measuring perturbs the thing measured. Quantify
+    overhead; run the headline cost numbers on an *un-patched* build and use the patched build only for
+    attribution.
+14. **Quantization, cache-block size, routing affinity, replica placement.** Each silently moves realized
+    hit rate and cost. Pin and report them; treat block size and quantization as fixed (or as declared
+    sub-studies), not free.
+15. **Timeout / censoring bias.** Horizon caps and wall-clock timeouts censor long trajectories; cost-per-
+    verified-task is sensitive to where the cap falls. Pre-register caps and report a censoring/survival curve.
+16. **Scaffold selection.** Swapping to a "stronger scaffold" to lift the resolve-rate floor (#14) changes
+    the very workload whose cache behavior is measured. Fix the scaffold or treat scaffold as an explicit axis.
+17. **Multiple comparisons.** The matrix is a grid of cells × policies × engines × horizons; un-corrected
+    per-cell tests will manufacture "significant" effects. Pre-register the primary contrast; correct the rest.
+18. **Benchmark-oracle error.** `FAIL_TO_PASS` / τ²-success oracles have false positives/negatives that feed
+    the denominator directly. Spot-audit verified outcomes; report oracle error as a denominator uncertainty.

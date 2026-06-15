@@ -93,7 +93,7 @@
     {id:'E2',cat:'engine',x:585,y:415,t:'SGLang',s:'RadixAttention reuse (ceiling)',det:'Open engine #2. Content-based prefix sharing — the best-case reuse ceiling to measure against.'},
     {id:'M',cat:'mech',x:585,y:560,t:'Agent-aware mechanisms',s:'KVFlow · Continuum · SAGA · ThunderAgent · Helium · Cortex · HexAGenT',det:'The crowded fix: everyone is building agent-aware caching/scheduling. That is why we measure rather than add one.'},
     {id:'V1',cat:'vendor',x:837,y:330,t:'NVIDIA Dynamo',s:'KV-aware router + agent hints',det:'The declared contract, shipping: nvext.agent_hints + cache_control TTL. Pre-empts “propose a hint spec”.'},
-    {id:'B3',cat:'meas',x:255,y:732,t:'SWE-bench V · τ²-bench · HAL',s:'our task benchmarks; HAL cost-aware',det:'Define “verified task”. SWE-bench Verified + τ²-bench are the two pilot arms.'},
+    {id:'B3',cat:'meas',x:255,y:732,t:'Task benchmarks',s:'SWE-bench V · τ²-bench · HAL',det:'Define “verified task”. SWE-bench Verified + τ²-bench are the two pilot arms; HAL is cost-aware.'},
     {id:'C0',cat:'meas',x:470,y:732,t:'Cost-of-Pass (anchor)',s:'$ per correct solution',det:'The academic anchor: expected cost per correct answer. We open it to serving-internal cache behavior.'},
     {id:'B1',cat:'meas',x:680,y:732,t:'AA-AgentPerf',s:'agents/MW under SLO; closed set',det:'Industry agent-efficiency benchmark — agents-per-megawatt, closed test set, no cost-per-task.'},
     {id:'B2',cat:'meas',x:885,y:732,t:'InferenceX',s:'$/token, throughput; not agentic',det:'General serving benchmark; cost-per-token and throughput, not tied to agent task success.'},
@@ -146,6 +146,7 @@
   N.forEach(function(n){
     var pos=document.createElement('div');pos.className='np';pos.style.left=n.x+'px';pos.style.top=n.y+'px';
     var el=document.createElement('div');el.className='node'+(n.big?' big':'');
+    if(n.cat==='meas')el.style.minHeight='64px';
     el.innerHTML='<div class="ttl">'+n.t+'</div><div class="sub">'+n.s+'</div>';
     el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label',n.t);
     pos.appendChild(el);world.appendChild(pos);nodeEls[n.id]=el;n._pos=pos;

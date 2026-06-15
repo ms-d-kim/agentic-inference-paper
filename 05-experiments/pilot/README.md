@@ -210,3 +210,36 @@ headline-metric denominator [cost-per-verified-*task*, group-level] is a sync de
     #11/#12 (stream/success invariance), and #14 (resolve rate) can only be answered by a micro-run.
     Split the list into *settle-on-paper* vs *needs-a-micro-pilot*; make the first GPU spend an explicit
     instrumentation + floor-rate spike, not the full 1,200-trajectory cell.
+
+### Net-new from the 2026-06-14 external Codex review (pass 3) — the deepest objections
+
+20. **(FATAL-if-unfixed) The locality tax must be a same-stream counterfactual, not a "share of the gap."**
+    The $/token-vs-$/task difference absorbs context growth, iteration count, failures, tool cost, queueing,
+    batch composition, and model behavior — a cache-hit-rate delta does not *identify* any fraction of
+    GPU-seconds, and the marginal A/B rule captures every chat interaction, not eviction. **Redefine** the
+    headline as paired **Δ GPU-seconds per verified task** between the bounded cache and a counterfactual
+    that replays the *identical* recorded stream with reuse-eligible prefixes resident (oracle cache); the
+    "fraction" is a derived quantity. If that counterfactual isn't realizable on the engine, it **gates C1**.
+    (See `docs/metric-design.md` → "same-stream counterfactual".)
+21. **`retain_during_tool` is not a stock engine knob — building it = building a mechanism.** The matrix
+    treats `{none, lru, retain_during_tool}` as a clean policy axis on *both* engines, but retain-during-tool
+    is exactly the Continuum/CacheTTL / Dynamo-TTL mechanism — implementing it ourselves contradicts
+    "measurement, not mechanism," and the two engines' eviction semantics differ (cf. #16). Either compare
+    **stock** policies only, or compare stock-vs-an-*existing* named mechanism (Dynamo TTL / LMCache) and
+    cite it — don't invent a third policy and call the study mechanism-free.
+22. **`realized ≤ available` is not invariant under the own-lineage scope.** Engine-realized hits can be
+    served from other requests / the chat tenant, so own-lineage `available` can be *exceeded* by `realized`
+    → the [0,1] clamp (#1) breaks. Define **two scope-matched estimands** (lineage-only; global-stream), each
+    with engine-specific cache keys, and never mix them. (See `docs/metric-design.md` → "two scope-matched
+    estimands".)
+
+> **H1 design sharpening (Codex):** isolated-vs-`mixed_0.50` changes content, working set, concurrency, and
+> prefix distribution all at once — it measures ordinary cache contention, not "the value of workflow
+> awareness," and tenant labels have no causal effect on an unmodified engine. The clean test holds the
+> **same request multiset, arrivals, KV budget, and offered load** fixed and varies **only** request
+> ordering and unaware-vs-(oracle/hinted)-retention. Fold this into #3/#11 before the H1 run.
+
+*(Source: external Codex pass 2026-06-14, pass 3. Also corrected in this pass: a GoodServe mischaracterization
+and three soft citation claims in `02-literature/sota-verified-2026.md`; added GAIATrace 2606.01725; the
+eviction-attribution feasibility (#15) downgraded to "needs a validated engine patch" in
+`docs/observability-and-power.md`; the "1,200 trajectories is power-sized" claim retracted there.)*

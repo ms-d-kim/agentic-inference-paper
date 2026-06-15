@@ -55,7 +55,7 @@ placement). Read each paper by asking which of those two it does.
 | StreamingLLM (attention sinks) — Xiao et al. (ICLR'24) | 2309.17453 ✓ | keep initial-token "sinks" + a recent window for streaming |
 | H2O (heavy-hitter oracle) — Zhang et al. (NeurIPS'23) | 2306.14048 ✓ | evict KV by attention-score importance |
 | KIVI — Liu et al. (2024) | 2402.02750 ✓ | tuning-free 2-bit KV cache quantization |
-| FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention — Tencent et al. | 2606.09079 ✓ | learned **Neural Memory Indexer** predicts query-critical KV chunks, keeps ~13.5%; *intra-request* long-context, DeepSeek-V4-coupled, preliminary (project suspended) |
+| FlashMemory-DeepSeek-V4 / Lookahead Sparse Attention — Tencent et al. | 2606.09079 ✓ | learned **Neural Memory Indexer** predicts query-critical KV chunks, keeps ~13.5%; *intra-request* long-context, DeepSeek-V4-coupled, preliminary (status unconfirmed) |
 
 ## Caching & reuse
 | Paper | arXiv / venue | What it is |

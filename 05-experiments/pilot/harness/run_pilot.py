@@ -82,18 +82,32 @@ def aggregate(records: list[TaskRecord]) -> dict:
     }
 
 
+def _as_list(x):
+    """matrix.yaml fields may be a scalar or a list; normalize to a list."""
+    return x if isinstance(x, list) else [x]
+
+
 def main(matrix_path: str = "experiments/matrix.yaml"):
+    """NOTE: control-flow skeleton only. This now iterates ALL pilot axes
+    (benchmark x tenancy x cache_policy x horizon x repeat) instead of the earlier
+    tenancy x policy bug that (a) passed the benchmark *list* to load_scenarios and
+    (b) silently dropped benchmark/horizon/repeats (pilot README issue #7). A real
+    bounded-KV budget per issue #4 still must replace the -1 placeholder; the cell
+    functions still raise NotImplementedError by design (co-design seams)."""
     cfg = yaml.safe_load(Path(matrix_path).read_text())
     p = cfg["pilot"]
-    scenarios = load_scenarios(p["benchmark"], p["scenarios"])
     all_records: list[TaskRecord] = []
-    for tenancy in p["tenancy"]:
-        workload = build_workload(scenarios, tenancy)
-        for policy in p["cache_policy"]:
-            cfg_id = f'{p["methodology"]}|{p["benchmark"]}|{tenancy}|{policy}'
-            engine = configure_engine(p["engine"], policy, bounded_cache_blocks=-1)
-            recs = run_and_trace(engine, workload, cfg_id)
-            all_records.extend(recs)
+    for benchmark in _as_list(p["benchmark"]):
+        scenarios = load_scenarios(benchmark, p["scenarios"])
+        for tenancy in _as_list(p["tenancy"]):
+            workload = build_workload(scenarios, tenancy)
+            for policy in _as_list(p["cache_policy"]):
+                for horizon in _as_list(p.get("horizon_max_iters", [16])):
+                    for repeat in range(int(p.get("repeats", 1))):
+                        cfg_id = f'{p["methodology"]}|{benchmark}|{tenancy}|{policy}|h{horizon}|r{repeat}'
+                        engine = configure_engine(p["engine"], policy, bounded_cache_blocks=-1)  # issue #4
+                        recs = run_and_trace(engine, workload, cfg_id)
+                        all_records.extend(recs)
     all_records = compute_available_reuse(all_records)
     print(aggregate(all_records))
 
