@@ -23,7 +23,7 @@ those gate GPU spend — the pilot cell runs only after.
   references flagged UNVERIFIED.
 - 2026-06-13: reconciled the working brief into the repo — added the canonical inference-systems
   reading map (`docs/inference-systems-reading-map.md`) and a threats-to-validity / methods checklist
-  (`docs/threats-to-validity.md`); resolved CONCUR (2601.22705, ICML 2026) UNVERIFIED → ✓; promoted
+  (`docs/threats-to-validity.md`); resolved CONCUR (2601.22705; ICML'26 claimed) UNVERIFIED → ✓; promoted
   the foundations to ✓ (10/10) and added the Sarathi-Serve ID (2403.02310); corrected the MLSys 2027
   venue detail (the earlier "Apr 11–15 / Crete" claim was wrong — MLSys runs in the US).
 - 2026-06-13: verified the AA-AgentPerf / InferenceMAX / NVIDIA Dynamo agentic-inference landscape
@@ -54,7 +54,7 @@ those gate GPU spend — the pilot cell runs only after.
   **cost-per-verified-task** decision — resolves pilot issues #1/#5). Resolved **GoodServe** (2605.16867,
   agentic goodput = the throughput-side dual) UNVERIFIED → ✓; added newly-found competitors **HexAGenT**
   (2605.16637) + **Cortex** (2510.14126, workflow-aware serving) and metric anchors **Cost-of-Pass**
-  (2504.13359, ICLR 2026), Efficient Agents (2508.02694), EET (2601.05777), TokenPowerBench. Added the
+  (2504.13359, OpenReview), Efficient Agents (2508.02694), EET (2601.05777), TokenPowerBench. Added the
   **"declared vs inferred"** orchestrator↔engine seam map (engine is workflow-agnostic by default; C4 =
   the 'declared' approach, pre-empted). Added a Methodology Mermaid flowchart to the README.
 - 2026-06-14: broad landscape sweep (4 parallel scouts) + stress-test pass + adversarial README review.

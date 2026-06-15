@@ -34,7 +34,7 @@ motivation only, never as research evidence):**
     unconfirmed) — not the multi-tenant/agentic-loop regime, and it does NOT touch C1.
 
 **Metric anchors + newly-found competitors (verified 2026-06-14 — see `docs/metric-design.md`):**
-12. **Cost-of-Pass** (2504.13359 ✓, ICLR 2026) — the economic-eval framework; academic anchor for
+12. **Cost-of-Pass** (2504.13359 ✓, OpenReview `vC9S20zsgN`) — the economic-eval framework; academic anchor for
     cost-per-verified-task. Read first for the metric write-up.
 13. **EET** (2601.05777 ✓) + **Efficient Agents** (2508.02694 ✓) — capability-side cost-of-pass /
     early-termination ("when to stop gritting"). + **TokenPowerBench** (AAAI ✓) — J/token energy.

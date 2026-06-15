@@ -59,7 +59,7 @@ they live at the wrong abstraction layer:
   information. **Verdict:** profilers can *corroborate the cost* of eviction (recompute on the timeline);
   they cannot *attribute* it. Attribution is an engine/scheduler fact, captured at step 2 above.
 
-- **Tencent's FlashMemory / Lookahead Sparse Attention** (`2606.09079`, project suspended). This predicts which
+- **Tencent's FlashMemory / Lookahead Sparse Attention** (`2606.09079`). This predicts which
   KV chunks are *query-critical* for the **current** generation (a learned Neural Memory Indexer keeps ~13.5%).
   It is **intra-request attention sparsification** — a *mechanism* for deciding what *one* request can drop —
   not a *cross-tenant* observability tool, and not about who evicts whom under contention. Adopting a predictor

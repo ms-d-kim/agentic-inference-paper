@@ -197,7 +197,7 @@ confirmed this session. Some may be internal codenames, renamed, or hallucinated
   A **declared-contract** competitor → belongs in the "declared vs inferred" seam map above.
 - **GoodServe** — ✓ RESOLVED 2026-06-14: real (arXiv 2605.16867, SJTU/CUHK-SZ); agentic goodput over
   heterogeneous resources; promoted to the measurement/cost table above.
-- **CONCUR** — ✓ RESOLVED 2026-06-13: real (arXiv 2601.22705, ICML 2026); promoted to the mechanisms
+- **CONCUR** — ✓ RESOLVED 2026-06-13: real (arXiv 2601.22705; ICML'26 *claimed, unconfirmed*); promoted to the mechanisms
   table above.
 
 ## Verdict (2026-06-13)

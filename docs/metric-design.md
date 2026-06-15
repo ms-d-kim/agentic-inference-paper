@@ -33,7 +33,7 @@ The field measures efficiency in three disconnected camps; our metric is the mis
 | Camp | What it measures | Representative work |
 |---|---|---|
 | Serving / capacity | useful **throughput** under an SLO (goodput) | **GoodServe** (agentic goodput = E2E-SLO completions/s; 2605.16867), AA-AgentPerf (agents/MW), InferenceMAX (tokens/s, $/token) |
-| Capability / economics | **cost per correct task** at the API black box | **Cost-of-Pass** (expected $ for a correct solution, ICLR 2026, 2504.13359), Efficient Agents (2508.02694), More with Less, EET (2601.05777) |
+| Capability / economics | **cost per correct task** at the API black box | **Cost-of-Pass** (expected $ for a correct solution, 2504.13359), Efficient Agents (2508.02694), More with Less, EET (2601.05777) |
 | Sustainability | **energy per output** | TokenPowerBench (J/token) |
 
 - **"Cost-of-Pass" is the academic name for our denominator** — expected cost of a *correct* solution,
